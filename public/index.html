@@ -412,6 +412,48 @@ async function goToStep2() {
     const system = `You are a political campaign document designer. Return a JSON object with: tagline (punchy campaign slogan, max 10 words), candidate_summary (2-3 sentence professional bio in third person), key_promise (single strongest campaign promise). Return ONLY valid JSON, nothing else.`;
     const user = `Campaign: ${formData.name}\nRace: ${formData.race}\nValues: ${formData.values}\nPromises: ${formData.promises}\nKey message: ${formData.one_thing}\nDifferentiator: ${formData.differentiator}\nBrand: ${JSON.stringify(selectedBrand)}\nTweaks: ${tweaks||'none'}`;
     docData = await callClaude(system, user);
+	const emailSystem = `You are a political campaign communications director. Return a JSON object with exactly these fields:
+	email_subject_lines (array of 3 subject line options),
+	email_body (full HTML email body using inline styles, branded with the candidate name and key promises, including a CTA to volunteer or donate),
+	press_release_headline (strong news headline),
+	press_release_subhead (one sentence subheadline),
+	press_release_lead (opening paragraph: who, what, when, where, why),
+	press_release_quote (a quote attributed to the candidate in first person),
+	press_release_boilerplate (2-sentence "about the campaign" paragraph),
+	press_release_contact (placeholder contact block: name, phone, email).
+	Return ONLY valid JSON, nothing else.`;
+
+	const emailUser = `Campaign: ${formData.name}
+	Race: ${formData.race}
+	Tagline: ${docData.tagline}	
+	Candidate summary: ${docData.candidate_summary}
+	Key promise: ${docData.key_promise}
+	Promises: ${formData.promises}
+	Values: ${formData.values}
+	Election date: ${formData.election_date}`;
+
+	const emailPRData = await callClaude(emailSystem, emailUser);
+	docData.email = emailPRData;
+	
+	const socialSystem = `You are a political campaign social media strategist. Return a JSON object with exactly these fields:
+	bio_twitter (candidate bio, max 160 characters),
+	bio_facebook (2-3 sentence bio),
+	bio_instagram (punchy 1-2 sentence bio with line breaks using \\n),
+	bio_linkedin (professional 2-3 sentence bio),
+	hashtags (array of 5 suggested campaign hashtags, each starting with #),
+	post_templates (array of 6 objects, each with: platform (string), type (e.g. Announcement, Promise Highlight, Event, Community), copy (the post 	text)).
+	Return ONLY valid JSON, nothing else.`;
+
+	const socialUser = `Campaign: ${formData.name}
+	Race: ${formData.race}
+	Tagline: ${docData.tagline}
+	Key promise: ${docData.key_promise}
+	Promises: ${formData.promises}
+	Values: ${formData.values}
+	Demographics: ${formData.demographics}`;
+
+	const socialData = await callClaude(socialSystem, socialUser);
+	docData.social = socialData;
 
     document.getElementById('loadingDocs').style.display = 'none';
     document.getElementById('docsResults').style.display = 'block';
@@ -543,7 +585,91 @@ function generateRoadmapHTML() {
     <p style="font-style:italic;opacity:0.9;">"${roadmapData.tagline}"</p>
   </div>
   <p style="font-size:0.9rem;color:#555;margin-bottom:2rem;">${roadmapData.summary}</p>
-  <h2 style="font-size:1.1rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;color:${selectedBrand.primary_color};">Campaign Phases &amp; Announcement Schedule</h2>
+  <h2 style="font-size:1.1rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;color:${selectedBrand.primary_color};">Campaign Phases &amp; 
+
+function generateEmailHTML() {
+  const e = docData.email;
+  const subjects = (e.email_subject_lines || []).map(s =>
+    `<li style="margin-bottom:4px;">${s}</li>`).join('');
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>${formData.name} — Email Template</title></head>
+<body style="font-family:Georgia,serif;max-width:600px;margin:40px auto;padding:0;color:#1a1a1a;">
+  <div style="background:${selectedBrand.primary_color};color:#fff;padding:24px 32px;">
+    <div style="font-size:1.5rem;font-weight:700;">${formData.name}</div>
+    <div style="font-size:0.85rem;opacity:0.85;margin-top:4px;">${formData.race}</div>
+    <div style="font-size:0.9rem;font-style:italic;margin-top:8px;opacity:0.9;">"${docData.tagline}"</div>
+  </div>
+  <div style="padding:32px;background:#fff;">
+    <p style="font-size:0.8rem;color:#888;margin-bottom:16px;"><strong>Suggested subject lines:</strong></p>
+    <ul style="font-size:0.85rem;color:#555;margin-bottom:24px;">${subjects}</ul>
+    <hr style="border:none;border-top:1px solid #eee;margin-bottom:24px;">
+    ${e.email_body || '<p>[Email body goes here]</p>'}
+  </div>
+  <div style="background:${selectedBrand.secondary_color};color:#fff;padding:16px 32px;font-size:0.75rem;text-align:center;">
+    ${formData.name} &middot; ${formData.race} &middot; Paid for by the campaign committee
+  </div>
+</body></html>`;
+}
+
+function generatePressReleaseHTML() {
+  const e = docData.email;
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>${formData.name} — Press Release</title>
+<style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 40px;color:#1a1a1a;line-height:1.7;}</style></head>
+<body>
+  <div style="border-bottom:3px solid ${selectedBrand.primary_color};padding-bottom:16px;margin-bottom:24px;">
+    <div style="font-size:0.8rem;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">FOR IMMEDIATE RELEASE</div>
+    <div style="font-size:0.8rem;color:#888;">[City, State] — ${formData.election_date ? new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) : 'Date'}</div>
+  </div>
+  <h1 style="font-size:1.5rem;color:${selectedBrand.primary_color};margin-bottom:8px;">${e.press_release_headline || '[Headline]'}</h1>
+  <h2 style="font-size:1rem;font-weight:400;color:#555;font-style:italic;margin-bottom:24px;">${e.press_release_subhead || '[Subheadline]'}</h2>
+  <p>${e.press_release_lead || '[Lead paragraph]'}</p>
+  <blockquote style="border-left:3px solid ${selectedBrand.accent_color};padding-left:16px;margin:24px 0;font-style:italic;color:#444;">
+    "${e.press_release_quote || '[Candidate quote]'}"
+  </blockquote>
+  <p>${e.press_release_boilerplate || '[Boilerplate]'}</p>
+  <div style="margin-top:32px;padding:16px;background:#f9f9f9;border-radius:6px;font-size:0.85rem;">
+    <strong>Media Contact:</strong><br>${e.press_release_contact || '[Contact info]'}
+  </div>
+  <div style="text-align:center;margin-top:32px;font-size:1.2rem;color:#888;">###</div>
+</body></html>`;
+}
+
+function generateSocialKitHTML() {
+  const s = docData.social;
+  const hashtags = (s.hashtags || []).map(h =>
+    `<span style="display:inline-block;background:${selectedBrand.primary_color}22;border:1px solid ${selectedBrand.primary_color}44;color:${selectedBrand.primary_color};padding:4px 12px;border-radius:99px;font-size:0.85rem;margin:3px;">${h}</span>`
+  ).join('');
+  const posts = (s.post_templates || []).map(p => `
+    <div style="border:1.5px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:0.75rem;">
+      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:${selectedBrand.primary_color};margin-bottom:6px;">${p.platform} — ${p.type}</div>
+      <div style="font-size:0.88rem;color:#333;line-height:1.6;">${p.copy}</div>
+    </div>`).join('');
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>${formData.name} — Social Media Kit</title>
+<style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 40px;color:#1a1a1a;}</style></head>
+<body>
+  <div style="background:${selectedBrand.primary_color};color:#fff;padding:28px 40px;border-radius:8px;margin-bottom:2rem;">
+    <h1 style="font-size:1.6rem;margin-bottom:4px;">${formData.name}</h1>
+    <p style="font-style:italic;opacity:0.9;">"${docData.tagline}"</p>
+  </div>
+  <h2 style="font-size:1rem;text-transform:uppercase;letter-spacing:0.08em;color:${selectedBrand.primary_color};border-bottom:2px solid #eee;padding-bottom:8px;margin-bottom:16px;">Platform Bios</h2>
+  <p><strong>Twitter/X</strong> (${(s.bio_twitter||'').length} chars)<br><em>${s.bio_twitter || ''}</em></p>
+  <p style="margin-top:12px;"><strong>Facebook</strong><br>${s.bio_facebook || ''}</p>
+  <p style="margin-top:12px;"><strong>Instagram</strong><br>${(s.bio_instagram||'').replace(/\\n/g,'<br>')}</p>
+  <p style="margin-top:12px;"><strong>LinkedIn</strong><br>${s.bio_linkedin || ''}</p>
+  <h2 style="font-size:1rem;text-transform:uppercase;letter-spacing:0.08em;color:${selectedBrand.primary_color};border-bottom:2px solid #eee;padding-bottom:8px;margin:2rem 0 16px;">Campaign Hashtags</h2>
+  <div style="margin-bottom:2rem;">${hashtags}</div>
+  <h2 style="font-size:1rem;text-transform:uppercase;letter-spacing:0.08em;color:${selectedBrand.primary_color};border-bottom:2px solid #eee;padding-bottom:8px;margin-bottom:16px;">Post Templates</h2>
+  ${posts}
+  <p style="font-size:0.75rem;color:#aaa;margin-top:2rem;text-align:center;">Generated by Campaign in a Box &middot; ${formData.name}</p>
+</body></html>`;
+}
+
+Announcement Schedule</h2>
   ${phases}
   <p style="font-size:0.75rem;color:#aaa;margin-top:2rem;text-align:center;">Generated by Campaign in a Box &middot; ${formData.name} &middot; ${formData.race}</p>
 </body></html>`;
@@ -572,9 +698,12 @@ function goToStep4() {
   btnContainer.innerHTML = '';
 
   const downloads = [
-    { label: '📄 Download Letterhead (HTML)', filename: 'letterhead.html', content: generateLetterheadHTML(), type: 'text/html' },
-    { label: '🗺️ Download Campaign Roadmap (HTML)', filename: 'campaign-roadmap.html', content: generateRoadmapHTML(), type: 'text/html' },
-  ];
+  { label: '📄 Download Letterhead (HTML)', filename: 'letterhead.html', content: generateLetterheadHTML(), type: 'text/html' },
+  { label: '📧 Download Email Template (HTML)', filename: 'email-template.html', content: generateEmailHTML(), type: 'text/html' },
+  { label: '📣 Download Press Release (HTML)', filename: 'press-release.html', content: generatePressReleaseHTML(), type: 'text/html' },
+  { label: '📱 Download Social Media Kit (HTML)', filename: 'social-media-kit.html', content: generateSocialKitHTML(), type: 'text/html' },
+  { label: '🗺️ Download Campaign Roadmap (HTML)', filename: 'campaign-roadmap.html', content: generateRoadmapHTML(), type: 'text/html' },
+];
 
   downloads.forEach(d => {
     const btn = document.createElement('button');
