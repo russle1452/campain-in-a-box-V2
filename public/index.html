@@ -23,19 +23,27 @@
   .step.visible { display: block; }
 
   .step-label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 0.4rem; }
-  .step-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 1.5rem; }
+  .step-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.4rem; }
+  .step-subtitle { font-size: 0.95rem; color: #666; font-style: italic; margin-bottom: 1.5rem; }
 
   .question-card { background: #fff; border: 1.5px solid #1a1a1a; border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
   .question-label { font-size: 0.88rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
   .question-hint { font-size: 0.8rem; color: #777; font-style: italic; margin-bottom: 8px; }
 
-  textarea, input[type="text"] {
+  textarea, input[type="text"], select {
     width: 100%; border: 1px solid #ccc; border-radius: 6px; padding: 10px 12px;
     font-size: 0.95rem; font-family: Georgia, serif; color: #1a1a1a;
-    background: #fafafa; transition: border-color 0.2s; resize: vertical;
+    background: #fafafa; transition: border-color 0.2s;
   }
-  textarea { min-height: 80px; }
-  textarea:focus, input[type="text"]:focus { outline: none; border-color: #1a1a1a; }
+  textarea { resize: vertical; min-height: 80px; }
+  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; cursor: pointer; }
+  textarea:focus, input[type="text"]:focus, select:focus { outline: none; border-color: #1a1a1a; }
+
+  .checkbox-group { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .checkbox-label { display: flex; align-items: center; gap: 10px; font-size: 0.92rem; cursor: pointer; padding: 8px 10px; border-radius: 6px; border: 1px solid #ddd; background: #fafafa; transition: background 0.15s, border-color 0.15s; user-select: none; }
+  .checkbox-label:hover { background: #f0ede6; border-color: #bbb; }
+  .checkbox-label input[type="checkbox"] { width: 16px; height: 16px; accent-color: #1a1a1a; cursor: pointer; flex-shrink: 0; }
+  .checkbox-label.checked { background: #f0ede6; border-color: #1a1a1a; font-weight: 700; }
 
   .btn { display: inline-flex; align-items: center; gap: 6px; padding: 11px 22px; border-radius: 7px; font-size: 0.95rem; font-weight: 700; cursor: pointer; border: 1.5px solid #1a1a1a; background: transparent; color: #1a1a1a; font-family: Georgia, serif; transition: background 0.15s, color 0.15s, transform 0.1s; letter-spacing: 0.02em; }
   .btn:hover { background: #1a1a1a; color: #fff; }
@@ -95,10 +103,6 @@
   .letterhead-promise { font-size: 0.88rem; padding: 10px 14px; border-radius: 6px; }
   .letterhead-footer { padding: 0.75rem 1.5rem; font-size: 0.75rem; opacity: 0.7; text-align: center; }
 
-  .palette-row { display: flex; gap: 8px; align-items: center; margin-top: 1rem; }
-  .pal-swatch { width: 22px; height: 22px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.1); }
-  .pal-label { font-size: 0.75rem; color: #888; font-style: italic; }
-
   .download-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 7px; font-size: 0.95rem; font-weight: 700; cursor: pointer; border: 1.5px solid #2d7a4f; background: #2d7a4f; color: #fff; font-family: Georgia, serif; text-decoration: none; transition: background 0.15s; margin-right: 8px; margin-bottom: 8px; }
   .download-btn:hover { background: #225e3c; border-color: #225e3c; }
 
@@ -115,18 +119,21 @@
     <p>AI-powered branding and strategy — built for campaigns that mean business</p>
   </div>
 
+  <!-- 6-step progress bar: Quiz1, Quiz2, Branding, Documents, Roadmap, Package -->
   <div class="progress-bar" id="progressBar">
     <div class="progress-step active" id="p0"></div>
     <div class="progress-step" id="p1"></div>
     <div class="progress-step" id="p2"></div>
     <div class="progress-step" id="p3"></div>
     <div class="progress-step" id="p4"></div>
+    <div class="progress-step" id="p5"></div>
   </div>
 
-  <!-- STEP 0: QUIZ -->
+  <!-- STEP 0: QUIZ PART 1 — Campaign Basics -->
   <div class="step visible" id="step0">
-    <div class="step-label">Step 1 of 5</div>
+    <div class="step-label">Step 1 of 6</div>
     <div class="step-title">Tell us about your campaign</div>
+    <div class="step-subtitle">The basics — who you are, what you're running for, and what you stand for.</div>
 
     <div class="question-card">
       <div class="question-label">Campaign or organization name</div>
@@ -186,18 +193,109 @@
 
     <div class="btn-row">
       <span></span>
-      <button class="btn btn-primary" onclick="goToStep1()">Generate branding options &rarr;</button>
+      <button class="btn btn-primary" onclick="goToStep1()">Next: Strategy context &rarr;</button>
     </div>
   </div>
 
-  <!-- STEP 1: BRANDING -->
+  <!-- STEP 1: QUIZ PART 2 — Strategy Context -->
   <div class="step" id="step1">
+    <div class="step-label">Step 2 of 6</div>
+    <div class="step-title">Strategy context</div>
+    <div class="step-subtitle">Help us understand the landscape so we can tailor your strategy, tone, and recommendations.</div>
+
+    <div class="question-card">
+      <div class="question-label">What is your campaign budget range?</div>
+      <div class="question-hint">This helps us scale your roadmap to what's actually achievable</div>
+      <select id="q_budget">
+        <option value="">— Select a range —</option>
+        <option value="Under $10,000">Under $10,000</option>
+        <option value="$10,000 – $50,000">$10,000 – $50,000</option>
+        <option value="$50,000 – $250,000">$50,000 – $250,000</option>
+        <option value="$250,000+">$250,000+</option>
+      </select>
+    </div>
+
+    <div class="question-card">
+      <div class="question-label">What is your candidate status in this race?</div>
+      <select id="q_incumbent_status">
+        <option value="">— Select your status —</option>
+        <option value="Challenger (running against an incumbent)">Challenger (running against an incumbent)</option>
+        <option value="Incumbent (defending my seat)">Incumbent (defending my seat)</option>
+        <option value="Open seat (no incumbent running)">Open seat (no incumbent running)</option>
+      </select>
+    </div>
+
+    <div class="question-card">
+      <div class="question-label">Tell us about your opponent(s)</div>
+      <div class="question-hint">Basic context helps us build contrast messaging — e.g. "3-term incumbent, well-funded but unpopular" or "political outsider with no governing experience"</div>
+      <textarea id="q_opponent" placeholder="e.g. 3-term incumbent who voted to raise property taxes twice and has faced ethics complaints..."></textarea>
+    </div>
+
+    <div class="question-card">
+      <div class="question-label">What is your campaign team size?</div>
+      <div class="question-hint">This shapes what actions we recommend — a solo candidate needs a different playbook than a staffed operation</div>
+      <select id="q_team_size">
+        <option value="">— Select team size —</option>
+        <option value="Solo candidate (just me)">Solo candidate (just me)</option>
+        <option value="Small team (2–5 people)">Small team (2–5 people)</option>
+        <option value="Medium team (6–15 people)">Medium team (6–15 people)</option>
+        <option value="Full staff (15+ people)">Full staff (15+ people)</option>
+      </select>
+    </div>
+
+    <div class="question-card">
+      <div class="question-label">How would you describe your district's geography?</div>
+      <div class="question-hint">This affects your tone, outreach channels, and media strategy</div>
+      <select id="q_geography">
+        <option value="">— Select geography —</option>
+        <option value="Urban">Urban</option>
+        <option value="Suburban">Suburban</option>
+        <option value="Rural">Rural</option>
+        <option value="Mixed (urban and suburban)">Mixed (urban and suburban)</option>
+        <option value="Mixed (suburban and rural)">Mixed (suburban and rural)</option>
+      </select>
+    </div>
+
+    <div class="question-card">
+      <div class="question-label">Which outreach channels does your campaign plan to use?</div>
+      <div class="question-hint">Select all that apply — we'll tailor your roadmap and social kit to these</div>
+      <div class="checkbox-group" id="outreach_checkboxes">
+        <label class="checkbox-label"><input type="checkbox" value="Door-knocking / canvassing"> Door-knocking / canvassing</label>
+        <label class="checkbox-label"><input type="checkbox" value="Direct mail / mailers"> Direct mail / mailers</label>
+        <label class="checkbox-label"><input type="checkbox" value="Social media (Facebook, Instagram, X)"> Social media (Facebook, Instagram, X)</label>
+        <label class="checkbox-label"><input type="checkbox" value="Local events and town halls"> Local events and town halls</label>
+        <label class="checkbox-label"><input type="checkbox" value="Phone banking"> Phone banking</label>
+        <label class="checkbox-label"><input type="checkbox" value="Local press and media"> Local press and media</label>
+        <label class="checkbox-label"><input type="checkbox" value="Email newsletters"> Email newsletters</label>
+      </div>
+    </div>
+
+    <div class="question-card">
+      <div class="question-label">What is your current level of name recognition?</div>
+      <div class="question-hint">This shapes how we frame your introduction to voters</div>
+      <select id="q_name_recognition">
+        <option value="">— Select recognition level —</option>
+        <option value="First-time candidate, largely unknown">First-time candidate, largely unknown</option>
+        <option value="Locally known (community leader, business owner, etc.)">Locally known (community leader, business owner, etc.)</option>
+        <option value="Previously ran for office (did not win)">Previously ran for office (did not win)</option>
+        <option value="Well-known in the district">Well-known in the district</option>
+      </select>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="showStep(0)">&larr; Back</button>
+      <button class="btn btn-primary" onclick="goToStep2()">Generate branding options &rarr;</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: BRANDING -->
+  <div class="step" id="step2">
     <div class="loading" id="loadingBranding">
       <div class="spinner"></div>
       <div class="loading-msg" id="loadingMsg">Analyzing your campaign values...</div>
     </div>
     <div id="brandingResults" style="display:none">
-      <div class="step-label">Step 2 of 5</div>
+      <div class="step-label">Step 3 of 6</div>
       <div class="step-title">Choose your brand identity</div>
       <div class="brand-options" id="brandOptions"></div>
       <div class="tweak-box">
@@ -206,21 +304,21 @@
       </div>
       <div id="brandError" style="display:none" class="error-msg"></div>
       <div class="btn-row">
-        <button class="btn" onclick="showStep(0)">&larr; Back</button>
-        <button class="btn btn-primary" onclick="goToStep2()">Apply brand &amp; generate documents &rarr;</button>
+        <button class="btn" onclick="showStep(1)">&larr; Back</button>
+        <button class="btn btn-primary" onclick="goToStep3()">Apply brand &amp; generate documents &rarr;</button>
       </div>
     </div>
   </div>
 
-  <!-- STEP 2: DOCUMENTS -->
-  <div class="step" id="step2">
+  <!-- STEP 3: DOCUMENTS -->
+  <div class="step" id="step3">
     <div class="loading" id="loadingDocs">
       <div class="spinner"></div>
-      <div class="loading-msg">Building your branded documents...</div>
+      <div class="loading-msg" id="loadingDocsMsg">Building your branded documents...</div>
     </div>
     <div id="docsResults" style="display:none">
-      <div class="step-label">Step 3 of 5</div>
-      <div class="step-title">Your branded letterhead</div>
+      <div class="step-label">Step 4 of 6</div>
+      <div class="step-title">Your branded documents</div>
       <div id="letterheadPreview" style="margin-bottom:1.5rem"></div>
       <div class="doc-grid">
         <div class="doc-card"><div class="doc-icon">📄</div><div class="doc-name">Letterhead (HTML)</div><div class="doc-desc">Editable branded document</div></div>
@@ -229,20 +327,20 @@
         <div class="doc-card"><div class="doc-icon">📱</div><div class="doc-name">Social media kit</div><div class="doc-desc">Post templates and copy</div></div>
       </div>
       <div class="btn-row">
-        <button class="btn" onclick="showStep(1)">&larr; Back</button>
-        <button class="btn btn-primary" onclick="goToStep3()">Generate campaign roadmap &rarr;</button>
+        <button class="btn" onclick="showStep(2)">&larr; Back</button>
+        <button class="btn btn-primary" onclick="goToStep4()">Generate campaign roadmap &rarr;</button>
       </div>
     </div>
   </div>
 
-  <!-- STEP 3: ROADMAP -->
-  <div class="step" id="step3">
+  <!-- STEP 4: ROADMAP -->
+  <div class="step" id="step4">
     <div class="loading" id="loadingRoadmap">
       <div class="spinner"></div>
       <div class="loading-msg">Building your campaign roadmap and announcement schedule...</div>
     </div>
     <div id="roadmapResults" style="display:none">
-      <div class="step-label">Step 4 of 5</div>
+      <div class="step-label">Step 5 of 6</div>
       <div class="step-title">Your campaign roadmap</div>
       <div class="output-section" style="margin-bottom:1rem">
         <div class="output-title" id="roadmapTagline"></div>
@@ -250,15 +348,15 @@
       </div>
       <div id="roadmapPhases"></div>
       <div class="btn-row">
-        <button class="btn" onclick="showStep(2)">&larr; Back</button>
-        <button class="btn btn-primary" onclick="goToStep4()">Build download package &rarr;</button>
+        <button class="btn" onclick="showStep(3)">&larr; Back</button>
+        <button class="btn btn-primary" onclick="goToStep5()">Build download package &rarr;</button>
       </div>
     </div>
   </div>
 
-  <!-- STEP 4: PACKAGE -->
-  <div class="step" id="step4">
-    <div class="step-label">Step 5 of 5</div>
+  <!-- STEP 5: PACKAGE -->
+  <div class="step" id="step5">
+    <div class="step-label">Step 6 of 6</div>
     <div class="step-title">Your campaign package is ready</div>
     <div class="final-package" id="finalPackageBox">
       <h2 id="finalCampaignName"></h2>
@@ -281,8 +379,10 @@ let brandOptions = [];
 let roadmapData = null;
 let docData = null;
 
+// ── PROGRESS BAR (6 steps) ───────────────────────────────────────────────────
+
 function setProgress(n) {
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     const el = document.getElementById('p' + i);
     el.className = 'progress-step' + (i < n ? ' done' : i === n ? ' active' : '');
   }
@@ -297,25 +397,61 @@ function showStep(n) {
 
 function restart() {
   selectedBrand = null; brandOptions = []; roadmapData = null; docData = null;
+  document.querySelectorAll('#outreach_checkboxes input[type="checkbox"]').forEach(cb => {
+    cb.checked = false;
+    cb.closest('label').classList.remove('checked');
+  });
   showStep(0);
 }
 
+// ── CHECKBOX HELPER ──────────────────────────────────────────────────────────
+
+function getCheckedOutreach() {
+  const checked = [];
+  document.querySelectorAll('#outreach_checkboxes input[type="checkbox"]:checked').forEach(cb => {
+    checked.push(cb.value);
+  });
+  return checked.length > 0 ? checked.join(', ') : 'Not specified';
+}
+
+// Wire up checkbox visual state
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#outreach_checkboxes input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      cb.closest('label').classList.toggle('checked', cb.checked);
+    });
+  });
+});
+
+// ── FORM COLLECTION ──────────────────────────────────────────────────────────
+
 function collectForm() {
   formData = {
-    name: document.getElementById('q_name').value.trim(),
-    race: document.getElementById('q_race').value.trim(),
-    district: document.getElementById('q_district').value.trim(),
-    election_date: document.getElementById('q_election_date').value.trim(),
-    filing_deadline: document.getElementById('q_filing_deadline').value.trim(),
-    values: document.getElementById('q_values').value.trim(),
-    values_detail: document.getElementById('q_values_detail').value.trim(),
-    promises: document.getElementById('q_promises').value.trim(),
-    differentiator: document.getElementById('q_differentiator').value.trim(),
-    demographics: document.getElementById('q_demographics').value.trim(),
-    local_events: document.getElementById('q_local_events').value.trim(),
-    one_thing: document.getElementById('q_one_thing').value.trim(),
+    // Part 1 — Campaign Basics
+    name:             document.getElementById('q_name').value.trim(),
+    race:             document.getElementById('q_race').value.trim(),
+    district:         document.getElementById('q_district').value.trim(),
+    election_date:    document.getElementById('q_election_date').value.trim(),
+    filing_deadline:  document.getElementById('q_filing_deadline').value.trim(),
+    values:           document.getElementById('q_values').value.trim(),
+    values_detail:    document.getElementById('q_values_detail').value.trim(),
+    promises:         document.getElementById('q_promises').value.trim(),
+    differentiator:   document.getElementById('q_differentiator').value.trim(),
+    demographics:     document.getElementById('q_demographics').value.trim(),
+    local_events:     document.getElementById('q_local_events').value.trim(),
+    one_thing:        document.getElementById('q_one_thing').value.trim(),
+    // Part 2 — Strategy Context
+    budget:           document.getElementById('q_budget').value,
+    incumbent_status: document.getElementById('q_incumbent_status').value,
+    opponent:         document.getElementById('q_opponent').value.trim(),
+    team_size:        document.getElementById('q_team_size').value,
+    geography:        document.getElementById('q_geography').value,
+    outreach:         getCheckedOutreach(),
+    name_recognition: document.getElementById('q_name_recognition').value,
   };
 }
+
+// ── API CALL ─────────────────────────────────────────────────────────────────
 
 async function callClaude(systemPrompt, userMessage) {
   const res = await fetch('/api/claude', {
@@ -339,13 +475,20 @@ async function callClaude(systemPrompt, userMessage) {
   return JSON.parse(jsonMatch[0]);
 }
 
-async function goToStep1() {
+// ── STEP NAVIGATION ──────────────────────────────────────────────────────────
+
+function goToStep1() {
   collectForm();
   if (!formData.name || !formData.values) {
     alert('Please fill in at least your campaign name and core values.');
     return;
   }
   showStep(1);
+}
+
+async function goToStep2() {
+  collectForm();
+  showStep(2);
   document.getElementById('loadingBranding').style.display = 'block';
   document.getElementById('brandingResults').style.display = 'none';
 
@@ -354,8 +497,22 @@ async function goToStep1() {
   const iv = setInterval(() => { document.getElementById('loadingMsg').textContent = msgs[++mi % msgs.length]; }, 2000);
 
   try {
-    const system = `You are a professional political campaign branding consultant. Given campaign info, return exactly 3 distinct brand identity options as a JSON array. Each must have: name (2-3 words), primary_color (hex), secondary_color (hex), accent_color (hex), font_style (string), tone (string), reasoning (1-2 sentences on color psychology), keywords (array of 4 strings). Make each option genuinely distinct in color family. Return ONLY a valid JSON array — no markdown, no explanation.`;
-    const user = `Campaign: ${formData.name}\nRace: ${formData.race}\nDistrict: ${formData.district}\nValues: ${formData.values}\nValue details: ${formData.values_detail}\nPromises: ${formData.promises}\nDifferentiator: ${formData.differentiator}\nDemographics: ${formData.demographics}\nKey message: ${formData.one_thing}`;
+    const system = `You are a professional political campaign branding consultant. Given campaign info, return exactly 3 distinct brand identity options as a JSON array. Each must have: name (2-3 words), primary_color (hex), secondary_color (hex), accent_color (hex), font_style (string), tone (string), reasoning (1-2 sentences on color psychology and how it fits this campaign's status and geography), keywords (array of 4 strings). Make each option genuinely distinct in color family. Consider incumbent status, geography, budget, and name recognition when choosing tone and palette. Return ONLY a valid JSON array — no markdown, no explanation.`;
+    const user = `Campaign: ${formData.name}
+Race: ${formData.race}
+District: ${formData.district}
+Values: ${formData.values}
+Value details: ${formData.values_detail}
+Promises: ${formData.promises}
+Differentiator: ${formData.differentiator}
+Demographics: ${formData.demographics}
+Key message: ${formData.one_thing}
+Budget: ${formData.budget}
+Incumbent status: ${formData.incumbent_status}
+Opponent: ${formData.opponent}
+Team size: ${formData.team_size}
+Geography: ${formData.geography}
+Name recognition: ${formData.name_recognition}`;
     brandOptions = await callClaude(system, user);
     clearInterval(iv);
     renderBrandOptions();
@@ -401,60 +558,95 @@ function renderBrandOptions() {
   });
 }
 
-async function goToStep2() {
+async function goToStep3() {
   if (!selectedBrand) { alert('Please select a brand option.'); return; }
-  showStep(2);
+  showStep(3);
   document.getElementById('loadingDocs').style.display = 'block';
   document.getElementById('docsResults').style.display = 'none';
 
+  const msgs = [
+    'Building your branded letterhead...',
+    'Writing your email template and press release...',
+    'Creating your social media kit...'
+  ];
+  let mi = 0;
+  document.getElementById('loadingDocsMsg').textContent = msgs[0];
+  const iv = setInterval(() => { document.getElementById('loadingDocsMsg').textContent = msgs[Math.min(++mi, msgs.length - 1)]; }, 4000);
+
   try {
     const tweaks = document.getElementById('q_tweaks').value.trim();
-    const system = `You are a political campaign document designer. Return a JSON object with: tagline (punchy campaign slogan, max 10 words), candidate_summary (2-3 sentence professional bio in third person), key_promise (single strongest campaign promise). Return ONLY valid JSON, nothing else.`;
-    const user = `Campaign: ${formData.name}\nRace: ${formData.race}\nValues: ${formData.values}\nPromises: ${formData.promises}\nKey message: ${formData.one_thing}\nDifferentiator: ${formData.differentiator}\nBrand: ${JSON.stringify(selectedBrand)}\nTweaks: ${tweaks||'none'}`;
-    docData = await callClaude(system, user);
-	const emailSystem = `You are a political campaign communications director. Return a JSON object with exactly these fields:
-	email_subject_lines (array of 3 subject line options),
-	email_body (full HTML email body using inline styles, branded with the candidate name and key promises, including a CTA to volunteer or donate),
-	press_release_headline (strong news headline),
-	press_release_subhead (one sentence subheadline),
-	press_release_lead (opening paragraph: who, what, when, where, why),
-	press_release_quote (a quote attributed to the candidate in first person),
-	press_release_boilerplate (2-sentence "about the campaign" paragraph),
-	press_release_contact (placeholder contact block: name, phone, email).
-	Return ONLY valid JSON, nothing else.`;
 
-	const emailUser = `Campaign: ${formData.name}
-	Race: ${formData.race}
-	Tagline: ${docData.tagline}	
-	Candidate summary: ${docData.candidate_summary}
-	Key promise: ${docData.key_promise}
-	Promises: ${formData.promises}
-	Values: ${formData.values}
-	Election date: ${formData.election_date}`;
+    // --- API CALL 1: Tagline, bio, key promise ---
+    const coreSystem = `You are a political campaign document designer. Return a JSON object with: tagline (punchy campaign slogan, max 10 words), candidate_summary (2-3 sentence professional bio in third person — frame based on incumbent status and name recognition), key_promise (single strongest campaign promise). Return ONLY valid JSON, nothing else.`;
+    const coreUser = `Campaign: ${formData.name}
+Race: ${formData.race}
+Values: ${formData.values}
+Promises: ${formData.promises}
+Key message: ${formData.one_thing}
+Differentiator: ${formData.differentiator}
+Incumbent status: ${formData.incumbent_status}
+Opponent: ${formData.opponent}
+Name recognition: ${formData.name_recognition}
+Geography: ${formData.geography}
+Brand: ${JSON.stringify(selectedBrand)}
+Tweaks: ${tweaks||'none'}`;
+    docData = await callClaude(coreSystem, coreUser);
 
-	const emailPRData = await callClaude(emailSystem, emailUser);
-	docData.email = emailPRData;
-	
-	const socialSystem = `You are a political campaign social media strategist. Return a JSON object with exactly these fields:
-	bio_twitter (candidate bio, max 160 characters),
-	bio_facebook (2-3 sentence bio),
-	bio_instagram (punchy 1-2 sentence bio with line breaks using \\n),
-	bio_linkedin (professional 2-3 sentence bio),
-	hashtags (array of 5 suggested campaign hashtags, each starting with #),
-	post_templates (array of 6 objects, each with: platform (string), type (e.g. Announcement, Promise Highlight, Event, Community), copy (the post 	text)).
-	Return ONLY valid JSON, nothing else.`;
+    // --- API CALL 2: Email template + press release ---
+    const emailSystem = `You are a political campaign communications director. Return a JSON object with exactly these fields:
+email_subject_lines (array of 3 subject line options),
+email_body (full HTML email body string using inline styles only, with branded paragraphs covering the candidate's background, key promises, and a clear call to action — tailor the CTA and tone to the outreach channels and budget provided),
+press_release_headline (strong news headline),
+press_release_subhead (one sentence subheadline),
+press_release_lead (opening paragraph covering who, what, when, where, why),
+press_release_quote (a quote in first person attributed to the candidate),
+press_release_boilerplate (2-sentence about-the-campaign paragraph),
+press_release_contact (placeholder contact block as a plain text string with name, phone, email on separate lines).
+Return ONLY valid JSON, nothing else.`;
+    const emailUser = `Campaign: ${formData.name}
+Race: ${formData.race}
+District: ${formData.district}
+Tagline: ${docData.tagline}
+Candidate summary: ${docData.candidate_summary}
+Key promise: ${docData.key_promise}
+Promises: ${formData.promises}
+Values: ${formData.values}
+Election date: ${formData.election_date}
+Budget: ${formData.budget}
+Incumbent status: ${formData.incumbent_status}
+Opponent: ${formData.opponent}
+Outreach channels: ${formData.outreach}
+Geography: ${formData.geography}`;
+    const emailPRData = await callClaude(emailSystem, emailUser);
+    docData.email = emailPRData;
 
-	const socialUser = `Campaign: ${formData.name}
-	Race: ${formData.race}
-	Tagline: ${docData.tagline}
-	Key promise: ${docData.key_promise}
-	Promises: ${formData.promises}
-	Values: ${formData.values}
-	Demographics: ${formData.demographics}`;
+    // --- API CALL 3: Social media kit ---
+    const socialSystem = `You are a political campaign social media strategist. Return a JSON object with exactly these fields:
+bio_twitter (candidate bio, max 160 characters),
+bio_facebook (2-3 sentence bio for Facebook),
+bio_instagram (punchy 1-2 sentence bio, use the literal characters \\n for line breaks),
+bio_linkedin (professional 2-3 sentence bio for LinkedIn),
+hashtags (array of 5 suggested campaign hashtags each starting with #),
+post_templates (array of 6 objects each with: platform (string), type (string such as Announcement, Promise Highlight, Event, Community, or Contrast), copy (the full post text)).
+Tailor platforms and post types to the outreach channels selected. If the candidate has low name recognition, prioritize introduction posts. If challenger, include at least one contrast post.
+Return ONLY valid JSON, nothing else.`;
+    const socialUser = `Campaign: ${formData.name}
+Race: ${formData.race}
+Tagline: ${docData.tagline}
+Key promise: ${docData.key_promise}
+Promises: ${formData.promises}
+Values: ${formData.values}
+Demographics: ${formData.demographics}
+District: ${formData.district}
+Geography: ${formData.geography}
+Outreach channels: ${formData.outreach}
+Name recognition: ${formData.name_recognition}
+Incumbent status: ${formData.incumbent_status}
+Opponent: ${formData.opponent}`;
+    const socialData = await callClaude(socialSystem, socialUser);
+    docData.social = socialData;
 
-	const socialData = await callClaude(socialSystem, socialUser);
-	docData.social = socialData;
-
+    clearInterval(iv);
     document.getElementById('loadingDocs').style.display = 'none';
     document.getElementById('docsResults').style.display = 'block';
 
@@ -483,21 +675,44 @@ async function goToStep2() {
         </div>
       </div>
     `;
+
   } catch(e) {
+    clearInterval(iv);
     document.getElementById('loadingDocs').style.display = 'none';
     document.getElementById('docsResults').style.display = 'block';
     document.getElementById('docsResults').innerHTML = `<div class="error-msg">Error building documents: ${e.message}</div>`;
   }
 }
 
-async function goToStep3() {
-  showStep(3);
+async function goToStep4() {
+  showStep(4);
   document.getElementById('loadingRoadmap').style.display = 'block';
   document.getElementById('roadmapResults').style.display = 'none';
 
   try {
-    const system = `You are a senior political campaign strategist. Return a JSON object with: tagline (campaign slogan), summary (2 sentence big-picture strategy), phases (array of exactly 4 objects each with: phase_name, timeframe (use real dates based on election date and filing deadline provided), focus (2-3 sentences), key_actions (array of 4 specific action items), announcement (specific public announcement for this phase), local_hooks (array of 2 local events or dates to leverage in this phase)). Use the soft-launch to hard-launch model: 1) Community Presence, 2) Issue Dialogue, 3) Official Announcement, 4) Full Campaign Push. Make the roadmap specific to the district, dates and local events provided. Return ONLY valid JSON, nothing else.`;
-    const user = `Campaign: ${formData.name}\nRace: ${formData.race}\nDistrict: ${formData.district}\nElection date: ${formData.election_date}\nFiling deadline: ${formData.filing_deadline}\nValues: ${formData.values}\nPromises: ${formData.promises}\nDifferentiator: ${formData.differentiator}\nDemographics: ${formData.demographics}\nLocal events: ${formData.local_events}\nKey message: ${formData.one_thing}\nTagline: ${docData?.tagline||''}`;
+    const system = `You are a senior political campaign strategist. Return a JSON object with: tagline (campaign slogan), summary (2 sentence big-picture strategy), phases (array of exactly 4 objects each with: phase_name, timeframe (use real dates based on election date and filing deadline provided), focus (2-3 sentences), key_actions (array of 4 specific action items scaled to the team size and budget provided), announcement (specific public announcement for this phase), local_hooks (array of 2 local events or dates to leverage in this phase)).
+Use the soft-launch to hard-launch model: 1) Community Presence, 2) Issue Dialogue, 3) Official Announcement, 4) Full Campaign Push.
+Scale all recommendations to the budget and team size. Prioritize the outreach channels selected. If challenger, build in contrast messaging opportunities. If low name recognition, front-load introduction activities. Make the roadmap specific to the district, dates, geography, and local events provided.
+Return ONLY valid JSON, nothing else.`;
+    const user = `Campaign: ${formData.name}
+Race: ${formData.race}
+District: ${formData.district}
+Election date: ${formData.election_date}
+Filing deadline: ${formData.filing_deadline}
+Values: ${formData.values}
+Promises: ${formData.promises}
+Differentiator: ${formData.differentiator}
+Demographics: ${formData.demographics}
+Local events: ${formData.local_events}
+Key message: ${formData.one_thing}
+Tagline: ${docData?.tagline||''}
+Budget: ${formData.budget}
+Incumbent status: ${formData.incumbent_status}
+Opponent: ${formData.opponent}
+Team size: ${formData.team_size}
+Geography: ${formData.geography}
+Outreach channels: ${formData.outreach}
+Name recognition: ${formData.name_recognition}`;
     roadmapData = await callClaude(system, user);
 
     document.getElementById('loadingRoadmap').style.display = 'none';
@@ -528,6 +743,8 @@ async function goToStep3() {
   }
 }
 
+// ── DOCUMENT GENERATORS ──────────────────────────────────────────────────────
+
 function generateLetterheadHTML() {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -541,7 +758,7 @@ function generateLetterheadHTML() {
   .palette { display: flex; gap: 6px; margin-top: 10px; }
   .pal { width: 16px; height: 16px; border-radius: 3px; }
   .body-area { padding: 40px; min-height: 500px; border-bottom: 2px solid #eee; }
-  .footer { background: ${selectedBrand.secondary_color}; color: #fff; padding: 12px 40px; font-size: 0.78rem; text-align: center; opacity: 0.95; }
+  .footer { background: ${selectedBrand.secondary_color}; color: #fff; padding: 12px 40px; font-size: 0.78rem; text-align: center; }
 </style></head>
 <body>
   <div class="header">
@@ -563,10 +780,121 @@ function generateLetterheadHTML() {
 </body></html>`;
 }
 
+function generateEmailHTML() {
+  const e = docData.email || {};
+  const subjects = (e.email_subject_lines || []).map(s =>
+    `<li style="margin-bottom:6px;">${s}</li>`).join('');
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>${formData.name} — Email Template</title></head>
+<body style="font-family:Georgia,serif;max-width:600px;margin:40px auto;padding:0;color:#1a1a1a;background:#f4f1eb;">
+  <div style="background:${selectedBrand.primary_color};color:#fff;padding:28px 32px;">
+    <div style="font-size:1.6rem;font-weight:700;margin-bottom:4px;">${formData.name}</div>
+    <div style="font-size:0.85rem;opacity:0.85;">${formData.race}</div>
+    <div style="font-size:0.9rem;font-style:italic;margin-top:10px;opacity:0.9;">"${docData.tagline}"</div>
+  </div>
+  <div style="background:#fff;padding:32px;">
+    <p style="font-size:0.8rem;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;font-weight:700;">Suggested Subject Lines</p>
+    <ul style="font-size:0.88rem;color:#555;margin-bottom:28px;padding-left:1.2rem;">${subjects}</ul>
+    <hr style="border:none;border-top:1px solid #eee;margin-bottom:28px;">
+    ${e.email_body || '<p style="color:#999;font-style:italic;">[Email body goes here]</p>'}
+  </div>
+  <div style="background:${selectedBrand.secondary_color};color:#fff;padding:14px 32px;font-size:0.75rem;text-align:center;">
+    ${formData.name} &middot; ${formData.race} &middot; Paid for by the campaign committee
+  </div>
+</body></html>`;
+}
+
+function generatePressReleaseHTML() {
+  const e = docData.email || {};
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const contactLines = (e.press_release_contact || '[Name]\n[Phone]\n[Email]')
+    .split('\n').map(l => `${l}<br>`).join('');
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>${formData.name} — Press Release</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 800px; margin: 40px auto; padding: 0 40px; color: #1a1a1a; line-height: 1.7; }
+  h1 { font-size: 1.5rem; color: ${selectedBrand.primary_color}; margin-bottom: 8px; }
+  h2 { font-size: 1rem; font-weight: 400; color: #555; font-style: italic; margin-bottom: 28px; }
+  blockquote { border-left: 3px solid ${selectedBrand.accent_color}; padding-left: 18px; margin: 28px 0; font-style: italic; color: #444; }
+</style></head>
+<body>
+  <div style="background:${selectedBrand.primary_color};color:#fff;padding:20px 40px;margin:0 -40px 32px;display:flex;justify-content:space-between;align-items:center;">
+    <div style="font-size:1.2rem;font-weight:700;">${formData.name}</div>
+    <div style="font-size:0.85rem;opacity:0.85;">${formData.race}</div>
+  </div>
+  <div style="font-size:0.8rem;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">For Immediate Release</div>
+  <div style="font-size:0.8rem;color:#888;margin-bottom:28px;border-bottom:2px solid ${selectedBrand.primary_color};padding-bottom:16px;">${formData.district || '[City, State]'} — ${today}</div>
+  <h1>${e.press_release_headline || '[Headline]'}</h1>
+  <h2>${e.press_release_subhead || '[Subheadline]'}</h2>
+  <p>${e.press_release_lead || '[Lead paragraph]'}</p>
+  <blockquote>"${e.press_release_quote || '[Candidate quote]'}"</blockquote>
+  <p>${e.press_release_boilerplate || '[Boilerplate paragraph]'}</p>
+  <div style="margin-top:36px;padding:16px 20px;background:#f9f9f9;border-radius:6px;font-size:0.85rem;border-left:3px solid ${selectedBrand.primary_color};">
+    <strong>Media Contact:</strong><br>${contactLines}
+  </div>
+  <div style="text-align:center;margin-top:36px;font-size:1.3rem;color:#aaa;letter-spacing:0.3em;">###</div>
+  <div style="background:${selectedBrand.secondary_color};color:#fff;margin:32px -40px 0;padding:12px 40px;font-size:0.75rem;text-align:center;">
+    ${formData.name} &middot; ${formData.race} &middot; Paid for by the campaign committee
+  </div>
+</body></html>`;
+}
+
+function generateSocialKitHTML() {
+  const s = docData.social || {};
+  const hashtags = (s.hashtags || []).map(h =>
+    `<span style="display:inline-block;background:${selectedBrand.primary_color}18;border:1.5px solid ${selectedBrand.primary_color}55;color:${selectedBrand.primary_color};padding:5px 14px;border-radius:99px;font-size:0.85rem;margin:3px;font-family:Georgia,serif;">${h}</span>`
+  ).join('');
+  const posts = (s.post_templates || []).map(p => `
+    <div style="border:1.5px solid #e0ddd6;border-radius:8px;padding:1rem 1.25rem;margin-bottom:0.75rem;background:#fafaf7;">
+      <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:${selectedBrand.primary_color};margin-bottom:8px;">${p.platform} — ${p.type}</div>
+      <div style="font-size:0.9rem;color:#333;line-height:1.65;">${p.copy}</div>
+    </div>`).join('');
+  const igBio = (s.bio_instagram || '').replace(/\\n/g, '<br>');
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>${formData.name} — Social Media Kit</title>
+<style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 40px;color:#1a1a1a;background:#f4f1eb;} h2{font-size:0.9rem;text-transform:uppercase;letter-spacing:0.08em;color:${selectedBrand.primary_color};border-bottom:2px solid #e0ddd6;padding-bottom:8px;margin:2.5rem 0 1.25rem;}</style></head>
+<body>
+  <div style="background:${selectedBrand.primary_color};color:#fff;padding:28px 40px;border-radius:8px;margin-bottom:2.5rem;">
+    <div style="font-size:1.8rem;font-weight:700;margin-bottom:6px;">${formData.name}</div>
+    <div style="font-style:italic;opacity:0.9;font-size:1rem;">"${docData.tagline}"</div>
+    <div style="margin-top:12px;font-size:0.85rem;opacity:0.75;">${formData.race}</div>
+  </div>
+  <h2>Platform Bios</h2>
+  <div style="display:grid;gap:1rem;">
+    <div style="background:#fff;border-radius:8px;padding:1rem 1.25rem;border:1.5px solid #e0ddd6;">
+      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:6px;">Twitter / X <span style="color:${selectedBrand.primary_color};font-weight:400;">(${(s.bio_twitter||'').length} chars)</span></div>
+      <div style="font-size:0.9rem;color:#333;">${s.bio_twitter || ''}</div>
+    </div>
+    <div style="background:#fff;border-radius:8px;padding:1rem 1.25rem;border:1.5px solid #e0ddd6;">
+      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:6px;">Facebook</div>
+      <div style="font-size:0.9rem;color:#333;">${s.bio_facebook || ''}</div>
+    </div>
+    <div style="background:#fff;border-radius:8px;padding:1rem 1.25rem;border:1.5px solid #e0ddd6;">
+      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:6px;">Instagram</div>
+      <div style="font-size:0.9rem;color:#333;">${igBio}</div>
+    </div>
+    <div style="background:#fff;border-radius:8px;padding:1rem 1.25rem;border:1.5px solid #e0ddd6;">
+      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:6px;">LinkedIn</div>
+      <div style="font-size:0.9rem;color:#333;">${s.bio_linkedin || ''}</div>
+    </div>
+  </div>
+  <h2>Campaign Hashtags</h2>
+  <div style="margin-bottom:2rem;">${hashtags}</div>
+  <h2>Post Templates</h2>
+  ${posts}
+  <div style="background:${selectedBrand.secondary_color};color:#fff;margin:3rem -40px 0;padding:14px 40px;font-size:0.75rem;text-align:center;">
+    Generated by Campaign in a Box &middot; ${formData.name} &middot; ${formData.race}
+  </div>
+</body></html>`;
+}
+
 function generateRoadmapHTML() {
   const phases = (roadmapData.phases||[]).map((p,i) => `
-    <div style="border:1.5px solid #ddd;border-radius:8px;padding:1.25rem;margin-bottom:1rem;display:flex;gap:1rem;">
-      <div style="width:32px;height:32px;border-radius:50%;background:${selectedBrand.primary_color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">${i+1}</div>
+    <div style="border:1.5px solid #ddd;border-radius:8px;padding:1.25rem;margin-bottom:1rem;display:flex;gap:1rem;background:#fff;">
+      <div style="width:32px;height:32px;border-radius:50%;background:${selectedBrand.primary_color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-family:Georgia,serif;">${i+1}</div>
       <div>
         <strong>${p.phase_name}</strong> <span style="color:#888;font-style:italic;font-size:0.85rem;">${p.timeframe}</span>
         <p style="font-size:0.88rem;color:#444;margin:6px 0;">${p.focus}</p>
@@ -578,100 +906,18 @@ function generateRoadmapHTML() {
   return `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><title>${formData.name} — Campaign Roadmap</title>
-<style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 40px;color:#1a1a1a;}</style></head>
+<style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 40px;color:#1a1a1a;background:#f4f1eb;}</style></head>
 <body>
   <div style="background:${selectedBrand.primary_color};color:#fff;padding:28px 40px;border-radius:8px;margin-bottom:2rem;">
     <h1 style="font-size:1.8rem;margin-bottom:6px;">${formData.name}</h1>
     <p style="font-style:italic;opacity:0.9;">"${roadmapData.tagline}"</p>
   </div>
-  <p style="font-size:0.9rem;color:#555;margin-bottom:2rem;">${roadmapData.summary}</p>
-  <h2 style="font-size:1.1rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;color:${selectedBrand.primary_color};">Campaign Phases &amp; 
-
-function generateEmailHTML() {
-  const e = docData.email;
-  const subjects = (e.email_subject_lines || []).map(s =>
-    `<li style="margin-bottom:4px;">${s}</li>`).join('');
-  return `<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><title>${formData.name} — Email Template</title></head>
-<body style="font-family:Georgia,serif;max-width:600px;margin:40px auto;padding:0;color:#1a1a1a;">
-  <div style="background:${selectedBrand.primary_color};color:#fff;padding:24px 32px;">
-    <div style="font-size:1.5rem;font-weight:700;">${formData.name}</div>
-    <div style="font-size:0.85rem;opacity:0.85;margin-top:4px;">${formData.race}</div>
-    <div style="font-size:0.9rem;font-style:italic;margin-top:8px;opacity:0.9;">"${docData.tagline}"</div>
-  </div>
-  <div style="padding:32px;background:#fff;">
-    <p style="font-size:0.8rem;color:#888;margin-bottom:16px;"><strong>Suggested subject lines:</strong></p>
-    <ul style="font-size:0.85rem;color:#555;margin-bottom:24px;">${subjects}</ul>
-    <hr style="border:none;border-top:1px solid #eee;margin-bottom:24px;">
-    ${e.email_body || '<p>[Email body goes here]</p>'}
-  </div>
-  <div style="background:${selectedBrand.secondary_color};color:#fff;padding:16px 32px;font-size:0.75rem;text-align:center;">
-    ${formData.name} &middot; ${formData.race} &middot; Paid for by the campaign committee
-  </div>
-</body></html>`;
-}
-
-function generatePressReleaseHTML() {
-  const e = docData.email;
-  return `<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><title>${formData.name} — Press Release</title>
-<style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 40px;color:#1a1a1a;line-height:1.7;}</style></head>
-<body>
-  <div style="border-bottom:3px solid ${selectedBrand.primary_color};padding-bottom:16px;margin-bottom:24px;">
-    <div style="font-size:0.8rem;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">FOR IMMEDIATE RELEASE</div>
-    <div style="font-size:0.8rem;color:#888;">[City, State] — ${formData.election_date ? new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) : 'Date'}</div>
-  </div>
-  <h1 style="font-size:1.5rem;color:${selectedBrand.primary_color};margin-bottom:8px;">${e.press_release_headline || '[Headline]'}</h1>
-  <h2 style="font-size:1rem;font-weight:400;color:#555;font-style:italic;margin-bottom:24px;">${e.press_release_subhead || '[Subheadline]'}</h2>
-  <p>${e.press_release_lead || '[Lead paragraph]'}</p>
-  <blockquote style="border-left:3px solid ${selectedBrand.accent_color};padding-left:16px;margin:24px 0;font-style:italic;color:#444;">
-    "${e.press_release_quote || '[Candidate quote]'}"
-  </blockquote>
-  <p>${e.press_release_boilerplate || '[Boilerplate]'}</p>
-  <div style="margin-top:32px;padding:16px;background:#f9f9f9;border-radius:6px;font-size:0.85rem;">
-    <strong>Media Contact:</strong><br>${e.press_release_contact || '[Contact info]'}
-  </div>
-  <div style="text-align:center;margin-top:32px;font-size:1.2rem;color:#888;">###</div>
-</body></html>`;
-}
-
-function generateSocialKitHTML() {
-  const s = docData.social;
-  const hashtags = (s.hashtags || []).map(h =>
-    `<span style="display:inline-block;background:${selectedBrand.primary_color}22;border:1px solid ${selectedBrand.primary_color}44;color:${selectedBrand.primary_color};padding:4px 12px;border-radius:99px;font-size:0.85rem;margin:3px;">${h}</span>`
-  ).join('');
-  const posts = (s.post_templates || []).map(p => `
-    <div style="border:1.5px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:0.75rem;">
-      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:${selectedBrand.primary_color};margin-bottom:6px;">${p.platform} — ${p.type}</div>
-      <div style="font-size:0.88rem;color:#333;line-height:1.6;">${p.copy}</div>
-    </div>`).join('');
-  return `<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><title>${formData.name} — Social Media Kit</title>
-<style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 40px;color:#1a1a1a;}</style></head>
-<body>
-  <div style="background:${selectedBrand.primary_color};color:#fff;padding:28px 40px;border-radius:8px;margin-bottom:2rem;">
-    <h1 style="font-size:1.6rem;margin-bottom:4px;">${formData.name}</h1>
-    <p style="font-style:italic;opacity:0.9;">"${docData.tagline}"</p>
-  </div>
-  <h2 style="font-size:1rem;text-transform:uppercase;letter-spacing:0.08em;color:${selectedBrand.primary_color};border-bottom:2px solid #eee;padding-bottom:8px;margin-bottom:16px;">Platform Bios</h2>
-  <p><strong>Twitter/X</strong> (${(s.bio_twitter||'').length} chars)<br><em>${s.bio_twitter || ''}</em></p>
-  <p style="margin-top:12px;"><strong>Facebook</strong><br>${s.bio_facebook || ''}</p>
-  <p style="margin-top:12px;"><strong>Instagram</strong><br>${(s.bio_instagram||'').replace(/\\n/g,'<br>')}</p>
-  <p style="margin-top:12px;"><strong>LinkedIn</strong><br>${s.bio_linkedin || ''}</p>
-  <h2 style="font-size:1rem;text-transform:uppercase;letter-spacing:0.08em;color:${selectedBrand.primary_color};border-bottom:2px solid #eee;padding-bottom:8px;margin:2rem 0 16px;">Campaign Hashtags</h2>
-  <div style="margin-bottom:2rem;">${hashtags}</div>
-  <h2 style="font-size:1rem;text-transform:uppercase;letter-spacing:0.08em;color:${selectedBrand.primary_color};border-bottom:2px solid #eee;padding-bottom:8px;margin-bottom:16px;">Post Templates</h2>
-  ${posts}
-  <p style="font-size:0.75rem;color:#aaa;margin-top:2rem;text-align:center;">Generated by Campaign in a Box &middot; ${formData.name}</p>
-</body></html>`;
-}
-
-Announcement Schedule</h2>
+  <p style="font-size:0.9rem;color:#555;margin-bottom:2rem;background:#fff;padding:1rem 1.25rem;border-radius:8px;border:1.5px solid #e0ddd6;">${roadmapData.summary}</p>
+  <h2 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;color:${selectedBrand.primary_color};border-bottom:2px solid #e0ddd6;padding-bottom:8px;">Campaign Phases &amp; Announcement Schedule</h2>
   ${phases}
-  <p style="font-size:0.75rem;color:#aaa;margin-top:2rem;text-align:center;">Generated by Campaign in a Box &middot; ${formData.name} &middot; ${formData.race}</p>
+  <div style="background:${selectedBrand.secondary_color};color:#fff;margin:2rem -40px 0;padding:14px 40px;font-size:0.75rem;text-align:center;">
+    Generated by Campaign in a Box &middot; ${formData.name} &middot; ${formData.race}
+  </div>
 </body></html>`;
 }
 
@@ -683,13 +929,12 @@ function downloadFile(content, filename, type) {
   URL.revokeObjectURL(url);
 }
 
-function goToStep4() {
-  showStep(4);
+function goToStep5() {
+  showStep(5);
 
   const box = document.getElementById('finalPackageBox');
   box.style.background = selectedBrand.primary_color;
   box.style.color = '#fff';
-  box.style.borderRadius = '10px';
 
   document.getElementById('finalCampaignName').textContent = formData.name + ' — ' + formData.race;
   document.getElementById('finalSummary').textContent = roadmapData.summary;
@@ -698,12 +943,12 @@ function goToStep4() {
   btnContainer.innerHTML = '';
 
   const downloads = [
-  { label: '📄 Download Letterhead (HTML)', filename: 'letterhead.html', content: generateLetterheadHTML(), type: 'text/html' },
-  { label: '📧 Download Email Template (HTML)', filename: 'email-template.html', content: generateEmailHTML(), type: 'text/html' },
-  { label: '📣 Download Press Release (HTML)', filename: 'press-release.html', content: generatePressReleaseHTML(), type: 'text/html' },
-  { label: '📱 Download Social Media Kit (HTML)', filename: 'social-media-kit.html', content: generateSocialKitHTML(), type: 'text/html' },
-  { label: '🗺️ Download Campaign Roadmap (HTML)', filename: 'campaign-roadmap.html', content: generateRoadmapHTML(), type: 'text/html' },
-];
+    { label: '📄 Download Letterhead (HTML)',        filename: 'letterhead.html',        content: generateLetterheadHTML(),    type: 'text/html' },
+    { label: '📧 Download Email Template (HTML)',     filename: 'email-template.html',    content: generateEmailHTML(),         type: 'text/html' },
+    { label: '📣 Download Press Release (HTML)',      filename: 'press-release.html',     content: generatePressReleaseHTML(),  type: 'text/html' },
+    { label: '📱 Download Social Media Kit (HTML)',   filename: 'social-media-kit.html',  content: generateSocialKitHTML(),     type: 'text/html' },
+    { label: '🗺️ Download Campaign Roadmap (HTML)',   filename: 'campaign-roadmap.html',  content: generateRoadmapHTML(),       type: 'text/html' },
+  ];
 
   downloads.forEach(d => {
     const btn = document.createElement('button');
