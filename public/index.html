@@ -26,9 +26,16 @@
   .step-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.4rem; }
   .step-subtitle { font-size: 0.95rem; color: #666; font-style: italic; margin-bottom: 1.5rem; }
 
-  .question-card { background: #fff; border: 1.5px solid #1a1a1a; border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
+  .question-card { background: #fff; border: 1.5px solid #1a1a1a; border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; transition: border-color 0.2s; }
+  .question-card.invalid { border-color: #c0392b; }
   .question-label { font-size: 0.88rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
   .question-hint { font-size: 0.8rem; color: #777; font-style: italic; margin-bottom: 8px; }
+  .field-error { font-size: 0.78rem; color: #c0392b; margin-top: 6px; display: none; }
+  .field-error.visible { display: block; }
+
+  .word-count { font-size: 0.75rem; color: #aaa; text-align: right; margin-top: 4px; transition: color 0.2s; }
+  .word-count.warn { color: #c0392b; }
+  .word-count.ok { color: #2d7a4f; }
 
   textarea, input[type="text"], select {
     width: 100%; border: 1px solid #ccc; border-radius: 6px; padding: 10px 12px;
@@ -38,6 +45,7 @@
   textarea { resize: vertical; min-height: 80px; }
   select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; cursor: pointer; }
   textarea:focus, input[type="text"]:focus, select:focus { outline: none; border-color: #1a1a1a; }
+  textarea.invalid, input[type="text"].invalid { border-color: #c0392b; }
 
   .checkbox-group { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
   .checkbox-label { display: flex; align-items: center; gap: 10px; font-size: 0.92rem; cursor: pointer; padding: 8px 10px; border-radius: 6px; border: 1px solid #ddd; background: #fafafa; transition: background 0.15s, border-color 0.15s; user-select: none; }
@@ -52,6 +60,8 @@
   .btn-primary:hover { background: #333; }
   .btn-danger { border-color: #c0392b; color: #c0392b; }
   .btn-danger:hover { background: #c0392b; color: #fff; }
+  .btn-retry { border-color: #2d7a4f; color: #2d7a4f; margin-top: 1rem; }
+  .btn-retry:hover { background: #2d7a4f; color: #fff; }
   .btn-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
 
   .loading { text-align: center; padding: 4rem 1rem; }
@@ -74,11 +84,23 @@
   .brand-card.selected .selected-badge { display: block; }
 
   .tweak-box { background: #fff; border: 1.5px solid #ddd; border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem; }
-  .error-msg { font-size: 0.88rem; color: #c0392b; background: #fdf0ed; border: 1px solid #e8b4ae; border-radius: 7px; padding: 12px 16px; margin-bottom: 1rem; line-height: 1.5; }
+
+  /* Error box — friendly, plain language */
+  .error-box { background: #fdf0ed; border: 1.5px solid #e8b4ae; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+  .error-box p { font-size: 0.92rem; color: #922b21; line-height: 1.6; margin-bottom: 0.75rem; }
+  .error-box p:last-of-type { margin-bottom: 0; }
 
   .output-section { background: #fff; border: 1.5px solid #1a1a1a; border-radius: 10px; padding: 1.5rem; margin-bottom: 1rem; }
   .output-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
   .output-preview { font-size: 0.9rem; color: #444; line-height: 1.7; }
+
+  /* Copyable output blocks */
+  .copy-block { background: #fff; border: 1.5px solid #ddd; border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; position: relative; }
+  .copy-block-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 8px; }
+  .copy-block-text { font-size: 0.92rem; color: #1a1a1a; line-height: 1.65; }
+  .copy-btn { position: absolute; top: 1rem; right: 1rem; display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; border: 1px solid #ddd; background: #f4f1eb; color: #555; font-family: Georgia, serif; transition: all 0.15s; }
+  .copy-btn:hover { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+  .copy-btn.copied { background: #2d7a4f; color: #fff; border-color: #2d7a4f; }
 
   .doc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
   .doc-card { background: #fff; border: 1.5px solid #ddd; border-radius: 10px; padding: 1.25rem; text-align: center; }
@@ -109,6 +131,24 @@
   .final-package { border-radius: 10px; padding: 2rem; margin-bottom: 1.5rem; }
   .final-package h2 { font-size: 1.4rem; margin-bottom: 0.5rem; }
   .final-package p { font-size: 0.9rem; font-style: italic; line-height: 1.6; opacity: 0.85; }
+
+  /* ── MOBILE ──────────────────────────────────────────────────────────── */
+  @media (max-width: 480px) {
+    .app { padding: 1.25rem 1rem; }
+    .header h1 { font-size: 1.6rem; }
+    .step-title { font-size: 1.3rem; }
+    .doc-grid { grid-template-columns: 1fr; }
+    .brand-options { grid-template-columns: 1fr; }
+    .btn-row { flex-direction: column-reverse; gap: 10px; align-items: stretch; }
+    .btn-row .btn, .btn-row button { width: 100%; justify-content: center; }
+    .download-btn { width: 100%; margin-right: 0; justify-content: center; }
+    .copy-btn { position: static; display: flex; margin-top: 10px; width: 100%; justify-content: center; }
+    .copy-block { padding-bottom: 1rem; }
+    .phase-block { flex-direction: column; gap: 0.75rem; }
+    .phase-num { width: 28px; height: 28px; font-size: 0.8rem; }
+    textarea { min-height: 70px; }
+    .swatch { width: 30px; height: 30px; }
+  }
 </style>
 </head>
 <body>
@@ -119,7 +159,7 @@
     <p>AI-powered branding and strategy — built for campaigns that mean business</p>
   </div>
 
-  <!-- 6-step progress bar: Quiz1, Quiz2, Branding, Documents, Roadmap, Package -->
+  <!-- 6-step progress bar -->
   <div class="progress-bar" id="progressBar">
     <div class="progress-step active" id="p0"></div>
     <div class="progress-step" id="p1"></div>
@@ -135,11 +175,12 @@
     <div class="step-title">Tell us about your campaign</div>
     <div class="step-subtitle">The basics — who you are, what you're running for, and what you stand for.</div>
 
-    <div class="question-card">
-      <div class="question-label">Campaign or organization name</div>
+    <div class="question-card" id="card_name">
+      <div class="question-label">Campaign or organization name <span style="color:#c0392b">*</span></div>
       <input type="text" id="q_name" placeholder="e.g. Jane Smith for City Council" />
+      <div class="field-error" id="err_name">Please enter your campaign name.</div>
     </div>
-    <div class="question-card">
+    <div class="question-card" id="card_race">
       <div class="question-label">What race or position are you running for?</div>
       <input type="text" id="q_race" placeholder="e.g. City Council District 4, 2026" />
     </div>
@@ -148,19 +189,22 @@
       <div class="question-hint">This helps us tailor your roadmap to real filing deadlines and election dates</div>
       <input type="text" id="q_district" placeholder="e.g. New Jersey, Hudson County District 4" />
     </div>
-    <div class="question-card">
-      <div class="question-label">What is your election date?</div>
+    <div class="question-card" id="card_election_date">
+      <div class="question-label">What is your election date? <span style="color:#c0392b">*</span></div>
       <div class="question-hint">We'll build your announcement schedule backwards from this date</div>
       <input type="text" id="q_election_date" placeholder="e.g. November 3, 2026" />
+      <div class="field-error" id="err_election_date">Please enter your election date.</div>
     </div>
     <div class="question-card">
       <div class="question-label">What is the filing deadline for your race?</div>
       <input type="text" id="q_filing_deadline" placeholder="e.g. July 15, 2026" />
     </div>
-    <div class="question-card">
-      <div class="question-label">Name 3 to 5 core values your organization represents</div>
-      <div class="question-hint">These will drive your branding and color choices</div>
-      <textarea id="q_values" placeholder="e.g. Fiscal responsibility, community safety, educational equity..."></textarea>
+    <div class="question-card" id="card_values">
+      <div class="question-label">Name 3 to 5 core values your organization represents <span style="color:#c0392b">*</span></div>
+      <div class="question-hint">These will drive your branding and color choices (minimum 30 characters)</div>
+      <textarea id="q_values" placeholder="e.g. Fiscal responsibility, community safety, educational equity..." oninput="updateCount('q_values','count_values',30)"></textarea>
+      <div class="word-count" id="count_values">0 characters</div>
+      <div class="field-error" id="err_values">Please describe your core values (at least 30 characters).</div>
     </div>
     <div class="question-card">
       <div class="question-label">Explain the importance of each value</div>
@@ -186,9 +230,12 @@
       <div class="question-hint">e.g. town fairs, local holidays, school board meetings — these become announcement opportunities</div>
       <textarea id="q_local_events" placeholder="e.g. Hudson County Fair in August, Labor Day parade, Hispanic Heritage Month in September..."></textarea>
     </div>
-    <div class="question-card">
-      <div class="question-label">If there was one thing you wanted your voter base to know, what would it be?</div>
-      <textarea id="q_one_thing" placeholder="Your single most important message..."></textarea>
+    <div class="question-card" id="card_one_thing">
+      <div class="question-label">If there was one thing you wanted your voter base to know, what would it be? <span style="color:#c0392b">*</span></div>
+      <div class="question-hint">Minimum 30 characters</div>
+      <textarea id="q_one_thing" placeholder="Your single most important message..." oninput="updateCount('q_one_thing','count_one_thing',30)"></textarea>
+      <div class="word-count" id="count_one_thing">0 characters</div>
+      <div class="field-error" id="err_one_thing">Please enter your key message (at least 30 characters).</div>
     </div>
 
     <div class="btn-row">
@@ -214,7 +261,6 @@
         <option value="$250,000+">$250,000+</option>
       </select>
     </div>
-
     <div class="question-card">
       <div class="question-label">What is your candidate status in this race?</div>
       <select id="q_incumbent_status">
@@ -224,16 +270,14 @@
         <option value="Open seat (no incumbent running)">Open seat (no incumbent running)</option>
       </select>
     </div>
-
     <div class="question-card">
       <div class="question-label">Tell us about your opponent(s)</div>
-      <div class="question-hint">Basic context helps us build contrast messaging — e.g. "3-term incumbent, well-funded but unpopular" or "political outsider with no governing experience"</div>
+      <div class="question-hint">Basic context helps us build contrast messaging — e.g. "3-term incumbent, well-funded but unpopular"</div>
       <textarea id="q_opponent" placeholder="e.g. 3-term incumbent who voted to raise property taxes twice and has faced ethics complaints..."></textarea>
     </div>
-
     <div class="question-card">
       <div class="question-label">What is your campaign team size?</div>
-      <div class="question-hint">This shapes what actions we recommend — a solo candidate needs a different playbook than a staffed operation</div>
+      <div class="question-hint">This shapes what actions we recommend</div>
       <select id="q_team_size">
         <option value="">— Select team size —</option>
         <option value="Solo candidate (just me)">Solo candidate (just me)</option>
@@ -242,7 +286,6 @@
         <option value="Full staff (15+ people)">Full staff (15+ people)</option>
       </select>
     </div>
-
     <div class="question-card">
       <div class="question-label">How would you describe your district's geography?</div>
       <div class="question-hint">This affects your tone, outreach channels, and media strategy</div>
@@ -255,10 +298,9 @@
         <option value="Mixed (suburban and rural)">Mixed (suburban and rural)</option>
       </select>
     </div>
-
     <div class="question-card">
       <div class="question-label">Which outreach channels does your campaign plan to use?</div>
-      <div class="question-hint">Select all that apply — we'll tailor your roadmap and social kit to these</div>
+      <div class="question-hint">Select all that apply</div>
       <div class="checkbox-group" id="outreach_checkboxes">
         <label class="checkbox-label"><input type="checkbox" value="Door-knocking / canvassing"> Door-knocking / canvassing</label>
         <label class="checkbox-label"><input type="checkbox" value="Direct mail / mailers"> Direct mail / mailers</label>
@@ -269,7 +311,6 @@
         <label class="checkbox-label"><input type="checkbox" value="Email newsletters"> Email newsletters</label>
       </div>
     </div>
-
     <div class="question-card">
       <div class="question-label">What is your current level of name recognition?</div>
       <div class="question-hint">This shapes how we frame your introduction to voters</div>
@@ -302,7 +343,10 @@
         <div class="question-label" style="margin-bottom:8px">Any tweaks or preferences? (optional)</div>
         <textarea id="q_tweaks" placeholder="e.g. Make it feel more approachable, use red instead of blue, add more energy..." style="min-height:60px"></textarea>
       </div>
-      <div id="brandError" style="display:none" class="error-msg"></div>
+      <div id="brandError" style="display:none" class="error-box">
+        <p id="brandErrorMsg">Something went wrong generating your brand options. Please try again.</p>
+        <button class="btn btn-retry" onclick="retryBranding()">&#8635; Try again</button>
+      </div>
       <div class="btn-row">
         <button class="btn" onclick="showStep(1)">&larr; Back</button>
         <button class="btn btn-primary" onclick="goToStep3()">Apply brand &amp; generate documents &rarr;</button>
@@ -320,11 +364,19 @@
       <div class="step-label">Step 4 of 6</div>
       <div class="step-title">Your branded documents</div>
       <div id="letterheadPreview" style="margin-bottom:1.5rem"></div>
+
+      <!-- Copyable outputs -->
+      <div id="docCopyBlocks" style="margin-bottom:1.5rem"></div>
+
       <div class="doc-grid">
         <div class="doc-card"><div class="doc-icon">📄</div><div class="doc-name">Letterhead (HTML)</div><div class="doc-desc">Editable branded document</div></div>
         <div class="doc-card"><div class="doc-icon">📧</div><div class="doc-name">Email template</div><div class="doc-desc">Branded voter outreach</div></div>
         <div class="doc-card"><div class="doc-icon">📣</div><div class="doc-name">Press release template</div><div class="doc-desc">Official announcements</div></div>
         <div class="doc-card"><div class="doc-icon">📱</div><div class="doc-name">Social media kit</div><div class="doc-desc">Post templates and copy</div></div>
+      </div>
+      <div id="docsError" style="display:none" class="error-box">
+        <p id="docsErrorMsg">Something went wrong building your documents. Please try again.</p>
+        <button class="btn btn-retry" onclick="retryDocs()">&#8635; Try again</button>
       </div>
       <div class="btn-row">
         <button class="btn" onclick="showStep(2)">&larr; Back</button>
@@ -347,6 +399,10 @@
         <div class="output-preview" id="roadmapSummary"></div>
       </div>
       <div id="roadmapPhases"></div>
+      <div id="roadmapError" style="display:none" class="error-box">
+        <p id="roadmapErrorMsg">Something went wrong building your roadmap. Please try again.</p>
+        <button class="btn btn-retry" onclick="retryRoadmap()">&#8635; Try again</button>
+      </div>
       <div class="btn-row">
         <button class="btn" onclick="showStep(3)">&larr; Back</button>
         <button class="btn btn-primary" onclick="goToStep5()">Build download package &rarr;</button>
@@ -379,7 +435,41 @@ let brandOptions = [];
 let roadmapData = null;
 let docData = null;
 
-// ── PROGRESS BAR (6 steps) ───────────────────────────────────────────────────
+// ── SESSION STORAGE HELPERS ──────────────────────────────────────────────────
+
+function saveSession() {
+  try {
+    sessionStorage.setItem('ciab_formData',    JSON.stringify(formData));
+    sessionStorage.setItem('ciab_brandOptions', JSON.stringify(brandOptions));
+    sessionStorage.setItem('ciab_selectedBrand',JSON.stringify(selectedBrand));
+    sessionStorage.setItem('ciab_docData',      JSON.stringify(docData));
+    sessionStorage.setItem('ciab_roadmapData',  JSON.stringify(roadmapData));
+  } catch(e) { /* sessionStorage unavailable — silently ignore */ }
+}
+
+function loadSession() {
+  try {
+    const f  = sessionStorage.getItem('ciab_formData');
+    const bo = sessionStorage.getItem('ciab_brandOptions');
+    const sb = sessionStorage.getItem('ciab_selectedBrand');
+    const dd = sessionStorage.getItem('ciab_docData');
+    const rd = sessionStorage.getItem('ciab_roadmapData');
+    if (f)  formData      = JSON.parse(f);
+    if (bo) brandOptions  = JSON.parse(bo);
+    if (sb) selectedBrand = JSON.parse(sb);
+    if (dd) docData       = JSON.parse(dd);
+    if (rd) roadmapData   = JSON.parse(rd);
+  } catch(e) { /* corrupt cache — silently ignore */ }
+}
+
+function clearSession() {
+  try {
+    ['ciab_formData','ciab_brandOptions','ciab_selectedBrand','ciab_docData','ciab_roadmapData']
+      .forEach(k => sessionStorage.removeItem(k));
+  } catch(e) {}
+}
+
+// ── PROGRESS BAR ─────────────────────────────────────────────────────────────
 
 function setProgress(n) {
   for (let i = 0; i < 6; i++) {
@@ -393,15 +483,64 @@ function showStep(n) {
   document.getElementById('step' + n).classList.add('visible');
   setProgress(n);
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Restore cached results when navigating back to a completed step
+  if (n === 2 && brandOptions.length > 0) renderBrandOptions();
+  if (n === 3 && docData) renderDocResults();
+  if (n === 4 && roadmapData) renderRoadmapResults();
 }
 
 function restart() {
   selectedBrand = null; brandOptions = []; roadmapData = null; docData = null;
+  clearSession();
   document.querySelectorAll('#outreach_checkboxes input[type="checkbox"]').forEach(cb => {
     cb.checked = false;
     cb.closest('label').classList.remove('checked');
   });
   showStep(0);
+}
+
+// ── VALIDATION HELPERS ───────────────────────────────────────────────────────
+
+function updateCount(inputId, countId, minChars) {
+  const val = document.getElementById(inputId).value;
+  const len = val.length;
+  const el  = document.getElementById(countId);
+  el.textContent = len + ' characters';
+  el.className = 'word-count' + (len === 0 ? '' : len < minChars ? ' warn' : ' ok');
+}
+
+function validateStep0() {
+  let valid = true;
+
+  const checks = [
+    { id: 'q_name',          cardId: 'card_name',          errId: 'err_name',          test: v => v.trim().length > 0,  msg: 'Please enter your campaign name.' },
+    { id: 'q_election_date', cardId: 'card_election_date', errId: 'err_election_date', test: v => v.trim().length > 0,  msg: 'Please enter your election date.' },
+    { id: 'q_values',        cardId: 'card_values',        errId: 'err_values',        test: v => v.trim().length >= 30, msg: 'Please describe your core values (at least 30 characters).' },
+    { id: 'q_one_thing',     cardId: 'card_one_thing',     errId: 'err_one_thing',     test: v => v.trim().length >= 30, msg: 'Please enter your key message (at least 30 characters).' },
+  ];
+
+  checks.forEach(({ id, cardId, errId, test }) => {
+    const val  = document.getElementById(id).value;
+    const card = document.getElementById(cardId);
+    const err  = document.getElementById(errId);
+    if (!test(val)) {
+      card.classList.add('invalid');
+      document.getElementById(id).classList.add('invalid');
+      err.classList.add('visible');
+      valid = false;
+    } else {
+      card.classList.remove('invalid');
+      document.getElementById(id).classList.remove('invalid');
+      err.classList.remove('visible');
+    }
+  });
+
+  if (!valid) {
+    document.querySelector('.question-card.invalid')
+      .scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  return valid;
 }
 
 // ── CHECKBOX HELPER ──────────────────────────────────────────────────────────
@@ -414,20 +553,53 @@ function getCheckedOutreach() {
   return checked.length > 0 ? checked.join(', ') : 'Not specified';
 }
 
-// Wire up checkbox visual state
 document.addEventListener('DOMContentLoaded', () => {
+  // Wire checkbox visual state
   document.querySelectorAll('#outreach_checkboxes input[type="checkbox"]').forEach(cb => {
     cb.addEventListener('change', () => {
       cb.closest('label').classList.toggle('checked', cb.checked);
     });
   });
+  // Restore any saved session
+  loadSession();
+  // Restore form field values if we have saved formData
+  if (formData.name) restoreFormFields();
 });
+
+function restoreFormFields() {
+  const map = {
+    q_name: 'name', q_race: 'race', q_district: 'district',
+    q_election_date: 'election_date', q_filing_deadline: 'filing_deadline',
+    q_values: 'values', q_values_detail: 'values_detail', q_promises: 'promises',
+    q_differentiator: 'differentiator', q_demographics: 'demographics',
+    q_local_events: 'local_events', q_one_thing: 'one_thing',
+    q_budget: 'budget', q_incumbent_status: 'incumbent_status',
+    q_opponent: 'opponent', q_team_size: 'team_size',
+    q_geography: 'geography', q_name_recognition: 'name_recognition',
+  };
+  Object.entries(map).forEach(([elId, key]) => {
+    const el = document.getElementById(elId);
+    if (el && formData[key]) el.value = formData[key];
+  });
+  // Restore checkboxes
+  if (formData.outreach && formData.outreach !== 'Not specified') {
+    const selected = formData.outreach.split(', ');
+    document.querySelectorAll('#outreach_checkboxes input[type="checkbox"]').forEach(cb => {
+      if (selected.includes(cb.value)) {
+        cb.checked = true;
+        cb.closest('label').classList.add('checked');
+      }
+    });
+  }
+  // Update character counts
+  updateCount('q_values', 'count_values', 30);
+  updateCount('q_one_thing', 'count_one_thing', 30);
+}
 
 // ── FORM COLLECTION ──────────────────────────────────────────────────────────
 
 function collectForm() {
   formData = {
-    // Part 1 — Campaign Basics
     name:             document.getElementById('q_name').value.trim(),
     race:             document.getElementById('q_race').value.trim(),
     district:         document.getElementById('q_district').value.trim(),
@@ -440,7 +612,6 @@ function collectForm() {
     demographics:     document.getElementById('q_demographics').value.trim(),
     local_events:     document.getElementById('q_local_events').value.trim(),
     one_thing:        document.getElementById('q_one_thing').value.trim(),
-    // Part 2 — Strategy Context
     budget:           document.getElementById('q_budget').value,
     incumbent_status: document.getElementById('q_incumbent_status').value,
     opponent:         document.getElementById('q_opponent').value.trim(),
@@ -449,6 +620,44 @@ function collectForm() {
     outreach:         getCheckedOutreach(),
     name_recognition: document.getElementById('q_name_recognition').value,
   };
+  saveSession();
+}
+
+// ── COPY TO CLIPBOARD ────────────────────────────────────────────────────────
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '⎘ Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '✓ Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '⎘ Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function makeCopyBlock(label, text) {
+  const div = document.createElement('div');
+  div.className = 'copy-block';
+  div.innerHTML = `
+    <div class="copy-block-label">${label}</div>
+    <div class="copy-block-text">${text}</div>
+    <button class="copy-btn" onclick="copyText(this.previousElementSibling.textContent, this)">⎘ Copy</button>
+  `;
+  return div;
 }
 
 // ── API CALL ─────────────────────────────────────────────────────────────────
@@ -471,7 +680,7 @@ async function callClaude(systemPrompt, userMessage) {
   const data = await res.json();
   const text = data.content.map(b => b.text || '').join('');
   const jsonMatch = text.match(/[\[{][\s\S]*[\]}]/);
-  if (!jsonMatch) throw new Error('Could not parse AI response.');
+  if (!jsonMatch) throw new Error('Could not parse response. Please try again.');
   return JSON.parse(jsonMatch[0]);
 }
 
@@ -479,10 +688,7 @@ async function callClaude(systemPrompt, userMessage) {
 
 function goToStep1() {
   collectForm();
-  if (!formData.name || !formData.values) {
-    alert('Please fill in at least your campaign name and core values.');
-    return;
-  }
+  if (!validateStep0()) return;
   showStep(1);
 }
 
@@ -515,14 +721,20 @@ Geography: ${formData.geography}
 Name recognition: ${formData.name_recognition}`;
     brandOptions = await callClaude(system, user);
     clearInterval(iv);
+    saveSession();
     renderBrandOptions();
   } catch(e) {
     clearInterval(iv);
     document.getElementById('loadingBranding').style.display = 'none';
     document.getElementById('brandingResults').style.display = 'block';
     document.getElementById('brandError').style.display = 'block';
-    document.getElementById('brandError').textContent = 'Error generating branding: ' + e.message;
+    document.getElementById('brandErrorMsg').textContent = 'Something went wrong generating your brand options. Please try again.';
   }
+}
+
+function retryBranding() {
+  document.getElementById('brandError').style.display = 'none';
+  goToStep2();
 }
 
 function renderBrandOptions() {
@@ -531,11 +743,12 @@ function renderBrandOptions() {
   document.getElementById('brandError').style.display = 'none';
   const container = document.getElementById('brandOptions');
   container.innerHTML = '';
-  selectedBrand = brandOptions[0];
+  if (!selectedBrand) selectedBrand = brandOptions[0];
 
   brandOptions.forEach((opt, i) => {
+    const isSelected = selectedBrand && opt.name === selectedBrand.name;
     const card = document.createElement('div');
-    card.className = 'brand-card' + (i === 0 ? ' selected' : '');
+    card.className = 'brand-card' + (isSelected ? ' selected' : '');
     card.dataset.index = i;
     card.innerHTML = `
       <div class="color-swatches">
@@ -553,6 +766,7 @@ function renderBrandOptions() {
       document.querySelectorAll('.brand-card').forEach(c => c.classList.remove('selected'));
       card.classList.add('selected');
       selectedBrand = brandOptions[parseInt(card.dataset.index)];
+      saveSession();
     };
     container.appendChild(card);
   });
@@ -576,7 +790,6 @@ async function goToStep3() {
   try {
     const tweaks = document.getElementById('q_tweaks').value.trim();
 
-    // --- API CALL 1: Tagline, bio, key promise ---
     const coreSystem = `You are a political campaign document designer. Return a JSON object with: tagline (punchy campaign slogan, max 10 words), candidate_summary (2-3 sentence professional bio in third person — frame based on incumbent status and name recognition), key_promise (single strongest campaign promise). Return ONLY valid JSON, nothing else.`;
     const coreUser = `Campaign: ${formData.name}
 Race: ${formData.race}
@@ -592,7 +805,6 @@ Brand: ${JSON.stringify(selectedBrand)}
 Tweaks: ${tweaks||'none'}`;
     docData = await callClaude(coreSystem, coreUser);
 
-    // --- API CALL 2: Email template + press release ---
     const emailSystem = `You are a political campaign communications director. Return a JSON object with exactly these fields:
 email_subject_lines (array of 3 subject line options),
 email_body (full HTML email body string using inline styles only, with branded paragraphs covering the candidate's background, key promises, and a clear call to action — tailor the CTA and tone to the outreach channels and budget provided),
@@ -620,7 +832,6 @@ Geography: ${formData.geography}`;
     const emailPRData = await callClaude(emailSystem, emailUser);
     docData.email = emailPRData;
 
-    // --- API CALL 3: Social media kit ---
     const socialSystem = `You are a political campaign social media strategist. Return a JSON object with exactly these fields:
 bio_twitter (candidate bio, max 160 characters),
 bio_facebook (2-3 sentence bio for Facebook),
@@ -647,41 +858,70 @@ Opponent: ${formData.opponent}`;
     docData.social = socialData;
 
     clearInterval(iv);
-    document.getElementById('loadingDocs').style.display = 'none';
-    document.getElementById('docsResults').style.display = 'block';
-
-    document.getElementById('letterheadPreview').innerHTML = `
-      <div class="letterhead-box">
-        <div class="letterhead-header" style="background:${selectedBrand.primary_color}; color:#fff;">
-          <div>
-            <div class="letterhead-name">${formData.name}</div>
-            <div class="letterhead-race">${formData.race}</div>
-            <div style="display:flex;gap:6px;margin-top:10px;">
-              <div style="background:#ffffff44;width:18px;height:18px;border-radius:3px;"></div>
-              <div style="background:${selectedBrand.secondary_color};width:18px;height:18px;border-radius:3px;"></div>
-              <div style="background:${selectedBrand.accent_color};width:18px;height:18px;border-radius:3px;"></div>
-            </div>
-          </div>
-          <div class="letterhead-tagline">"${docData.tagline}"</div>
-        </div>
-        <div class="letterhead-body">
-          <div class="letterhead-summary">${docData.candidate_summary}</div>
-          <div class="letterhead-promise" style="background:${selectedBrand.primary_color}12; border-left:3px solid ${selectedBrand.accent_color};">
-            <strong>Key promise:</strong> ${docData.key_promise}
-          </div>
-        </div>
-        <div class="letterhead-footer" style="background:${selectedBrand.secondary_color}; color:#fff;">
-          ${formData.name} &middot; ${formData.race} &middot; Paid for by the campaign committee
-        </div>
-      </div>
-    `;
+    saveSession();
+    renderDocResults();
 
   } catch(e) {
     clearInterval(iv);
     document.getElementById('loadingDocs').style.display = 'none';
     document.getElementById('docsResults').style.display = 'block';
-    document.getElementById('docsResults').innerHTML = `<div class="error-msg">Error building documents: ${e.message}</div>`;
+    document.getElementById('docsError').style.display = 'block';
+    document.getElementById('docsErrorMsg').textContent = 'Something went wrong building your documents. Please try again.';
   }
+}
+
+function retryDocs() {
+  document.getElementById('docsError').style.display = 'none';
+  goToStep3();
+}
+
+function renderDocResults() {
+  document.getElementById('loadingDocs').style.display = 'none';
+  document.getElementById('docsResults').style.display = 'block';
+  document.getElementById('docsError').style.display = 'none';
+
+  // Letterhead preview
+  document.getElementById('letterheadPreview').innerHTML = `
+    <div class="letterhead-box">
+      <div class="letterhead-header" style="background:${selectedBrand.primary_color}; color:#fff;">
+        <div>
+          <div class="letterhead-name">${formData.name}</div>
+          <div class="letterhead-race">${formData.race}</div>
+          <div style="display:flex;gap:6px;margin-top:10px;">
+            <div style="background:#ffffff44;width:18px;height:18px;border-radius:3px;"></div>
+            <div style="background:${selectedBrand.secondary_color};width:18px;height:18px;border-radius:3px;"></div>
+            <div style="background:${selectedBrand.accent_color};width:18px;height:18px;border-radius:3px;"></div>
+          </div>
+        </div>
+        <div class="letterhead-tagline">"${docData.tagline}"</div>
+      </div>
+      <div class="letterhead-body">
+        <div class="letterhead-summary">${docData.candidate_summary}</div>
+        <div class="letterhead-promise" style="background:${selectedBrand.primary_color}12; border-left:3px solid ${selectedBrand.accent_color};">
+          <strong>Key promise:</strong> ${docData.key_promise}
+        </div>
+      </div>
+      <div class="letterhead-footer" style="background:${selectedBrand.secondary_color}; color:#fff;">
+        ${formData.name} &middot; ${formData.race} &middot; Paid for by the campaign committee
+      </div>
+    </div>
+  `;
+
+  // Copyable blocks
+  const s = docData.social || {};
+  const container = document.getElementById('docCopyBlocks');
+  container.innerHTML = '';
+  const blocks = [
+    { label: 'Tagline',            text: docData.tagline },
+    { label: 'Candidate Summary',  text: docData.candidate_summary },
+    { label: 'Key Promise',        text: docData.key_promise },
+    { label: 'Twitter / X Bio',    text: s.bio_twitter || '' },
+    { label: 'Facebook Bio',       text: s.bio_facebook || '' },
+    { label: 'Instagram Bio',      text: (s.bio_instagram || '').replace(/\\n/g, '\n') },
+    { label: 'LinkedIn Bio',       text: s.bio_linkedin || '' },
+    { label: 'Campaign Hashtags',  text: (s.hashtags || []).join('  ') },
+  ];
+  blocks.forEach(b => { if (b.text) container.appendChild(makeCopyBlock(b.label, b.text)); });
 }
 
 async function goToStep4() {
@@ -714,33 +954,52 @@ Geography: ${formData.geography}
 Outreach channels: ${formData.outreach}
 Name recognition: ${formData.name_recognition}`;
     roadmapData = await callClaude(system, user);
-
-    document.getElementById('loadingRoadmap').style.display = 'none';
-    document.getElementById('roadmapResults').style.display = 'block';
-    document.getElementById('roadmapTagline').textContent = '"' + roadmapData.tagline + '"';
-    document.getElementById('roadmapSummary').textContent = roadmapData.summary;
-
-    const phasesEl = document.getElementById('roadmapPhases');
-    phasesEl.innerHTML = '';
-    (roadmapData.phases||[]).forEach((phase, i) => {
-      const div = document.createElement('div');
-      div.className = 'phase-block';
-      div.innerHTML = `
-        <div class="phase-num">${i+1}</div>
-        <div style="flex:1">
-          <div class="phase-title">${phase.phase_name}</div>
-          <div class="phase-timeframe">${phase.timeframe}</div>
-          <div class="phase-focus">${phase.focus}</div>
-          <div class="phase-announce">Announce: ${phase.announcement}</div>
-          <div class="keyword-chips">${(phase.key_actions||[]).map(a=>`<span class="chip">${a}</span>`).join('')}</div>
-          ${phase.local_hooks ? `<div style="margin-top:8px;font-size:0.8rem;color:#888;font-style:italic;">Local hooks: ${phase.local_hooks.join(' · ')}</div>` : ''}
-        </div>`;
-      phasesEl.appendChild(div);
-    });
+    saveSession();
+    renderRoadmapResults();
   } catch(e) {
     document.getElementById('loadingRoadmap').style.display = 'none';
-    document.getElementById('roadmapResults').innerHTML = `<div class="error-msg">Error building roadmap: ${e.message}</div>`;
+    document.getElementById('roadmapResults').style.display = 'block';
+    document.getElementById('roadmapError').style.display = 'block';
+    document.getElementById('roadmapErrorMsg').textContent = 'Something went wrong building your roadmap. Please try again.';
   }
+}
+
+function retryRoadmap() {
+  document.getElementById('roadmapError').style.display = 'none';
+  goToStep4();
+}
+
+function renderRoadmapResults() {
+  document.getElementById('loadingRoadmap').style.display = 'none';
+  document.getElementById('roadmapResults').style.display = 'block';
+  document.getElementById('roadmapError').style.display = 'none';
+
+  document.getElementById('roadmapTagline').textContent = '"' + roadmapData.tagline + '"';
+  document.getElementById('roadmapSummary').textContent = roadmapData.summary;
+
+  const phasesEl = document.getElementById('roadmapPhases');
+  phasesEl.innerHTML = '';
+
+  // Roadmap summary copy block
+  const summaryBlock = makeCopyBlock('Roadmap Summary', roadmapData.summary);
+  phasesEl.appendChild(summaryBlock);
+
+  (roadmapData.phases||[]).forEach((phase, i) => {
+    const div = document.createElement('div');
+    div.className = 'phase-block';
+    div.innerHTML = `
+      <div class="phase-num">${i+1}</div>
+      <div style="flex:1">
+        <div class="phase-title">${phase.phase_name}</div>
+        <div class="phase-timeframe">${phase.timeframe}</div>
+        <div class="phase-focus">${phase.focus}</div>
+        <div class="phase-announce">Announce: ${phase.announcement}</div>
+        <div class="keyword-chips">${(phase.key_actions||[]).map(a=>`<span class="chip">${a}</span>`).join('')}</div>
+        ${phase.local_hooks ? `<div style="margin-top:8px;font-size:0.8rem;color:#888;font-style:italic;">Local hooks: ${phase.local_hooks.join(' · ')}</div>` : ''}
+        <button class="copy-btn" style="position:static;display:inline-flex;margin-top:10px;" onclick="copyText(${JSON.stringify(phase.focus + '\n\nAnnounce: ' + phase.announcement)}, this)">⎘ Copy phase</button>
+      </div>`;
+    phasesEl.appendChild(div);
+  });
 }
 
 // ── DOCUMENT GENERATORS ──────────────────────────────────────────────────────
@@ -782,8 +1041,7 @@ function generateLetterheadHTML() {
 
 function generateEmailHTML() {
   const e = docData.email || {};
-  const subjects = (e.email_subject_lines || []).map(s =>
-    `<li style="margin-bottom:6px;">${s}</li>`).join('');
+  const subjects = (e.email_subject_lines || []).map(s => `<li style="margin-bottom:6px;">${s}</li>`).join('');
   return `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><title>${formData.name} — Email Template</title></head>
@@ -808,8 +1066,7 @@ function generateEmailHTML() {
 function generatePressReleaseHTML() {
   const e = docData.email || {};
   const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  const contactLines = (e.press_release_contact || '[Name]\n[Phone]\n[Email]')
-    .split('\n').map(l => `${l}<br>`).join('');
+  const contactLines = (e.press_release_contact || '[Name]\n[Phone]\n[Email]').split('\n').map(l => `${l}<br>`).join('');
   return `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><title>${formData.name} — Press Release</title>
