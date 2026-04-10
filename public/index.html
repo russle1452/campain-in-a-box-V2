@@ -85,16 +85,25 @@
 
   .tweak-box { background: #fff; border: 1.5px solid #ddd; border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem; }
 
-  /* Error box — friendly, plain language */
   .error-box { background: #fdf0ed; border: 1.5px solid #e8b4ae; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
   .error-box p { font-size: 0.92rem; color: #922b21; line-height: 1.6; margin-bottom: 0.75rem; }
   .error-box p:last-of-type { margin-bottom: 0; }
+
+  /* Timeline warning banners */
+  .timeline-banner { border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; display: none; }
+  .timeline-banner.warn { background: #fef9e7; border: 1.5px solid #f0c040; }
+  .timeline-banner.urgent { background: #fdf0ed; border: 1.5px solid #e8b4ae; }
+  .timeline-banner-title { font-size: 0.92rem; font-weight: 700; margin-bottom: 6px; }
+  .timeline-banner.warn .timeline-banner-title { color: #7d6608; }
+  .timeline-banner.urgent .timeline-banner-title { color: #922b21; }
+  .timeline-banner-body { font-size: 0.85rem; line-height: 1.6; }
+  .timeline-banner.warn .timeline-banner-body { color: #7d6608; }
+  .timeline-banner.urgent .timeline-banner-body { color: #922b21; }
 
   .output-section { background: #fff; border: 1.5px solid #1a1a1a; border-radius: 10px; padding: 1.5rem; margin-bottom: 1rem; }
   .output-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
   .output-preview { font-size: 0.9rem; color: #444; line-height: 1.7; }
 
-  /* Copyable output blocks */
   .copy-block { background: #fff; border: 1.5px solid #ddd; border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; position: relative; }
   .copy-block-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 8px; }
   .copy-block-text { font-size: 0.92rem; color: #1a1a1a; line-height: 1.65; }
@@ -114,6 +123,7 @@
   .phase-timeframe { font-size: 0.78rem; color: #888; font-style: italic; margin-bottom: 6px; }
   .phase-focus { font-size: 0.85rem; color: #444; line-height: 1.55; margin-bottom: 8px; }
   .phase-announce { font-size: 0.82rem; color: #2d7a4f; font-weight: 700; margin-bottom: 8px; }
+  .phase-budget { font-size: 0.8rem; color: #555; background: #f4f1eb; border-radius: 6px; padding: 8px 12px; margin-top: 8px; border-left: 3px solid #aaa; }
 
   .letterhead-box { border-radius: 8px; overflow: hidden; margin-bottom: 1.25rem; }
   .letterhead-header { padding: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; }
@@ -159,7 +169,6 @@
     <p>AI-powered branding and strategy — built for campaigns that mean business</p>
   </div>
 
-  <!-- 6-step progress bar -->
   <div class="progress-bar" id="progressBar">
     <div class="progress-step active" id="p0"></div>
     <div class="progress-step" id="p1"></div>
@@ -180,7 +189,7 @@
       <input type="text" id="q_name" placeholder="e.g. Jane Smith for City Council" />
       <div class="field-error" id="err_name">Please enter your campaign name.</div>
     </div>
-    <div class="question-card" id="card_race">
+    <div class="question-card">
       <div class="question-label">What race or position are you running for?</div>
       <input type="text" id="q_race" placeholder="e.g. City Council District 4, 2026" />
     </div>
@@ -364,10 +373,7 @@
       <div class="step-label">Step 4 of 6</div>
       <div class="step-title">Your branded documents</div>
       <div id="letterheadPreview" style="margin-bottom:1.5rem"></div>
-
-      <!-- Copyable outputs -->
       <div id="docCopyBlocks" style="margin-bottom:1.5rem"></div>
-
       <div class="doc-grid">
         <div class="doc-card"><div class="doc-icon">📄</div><div class="doc-name">Letterhead (HTML)</div><div class="doc-desc">Editable branded document</div></div>
         <div class="doc-card"><div class="doc-icon">📧</div><div class="doc-name">Email template</div><div class="doc-desc">Branded voter outreach</div></div>
@@ -387,6 +393,16 @@
 
   <!-- STEP 4: ROADMAP -->
   <div class="step" id="step4">
+    <!-- Timeline warning banners — shown before loading starts -->
+    <div class="timeline-banner warn" id="timelineWarn">
+      <div class="timeline-banner-title" id="timelineWarnTitle">⚠️ Short timeline detected</div>
+      <div class="timeline-banner-body" id="timelineWarnBody"></div>
+    </div>
+    <div class="timeline-banner urgent" id="timelineUrgent">
+      <div class="timeline-banner-title" id="timelineUrgentTitle">🚨 Very short timeline</div>
+      <div class="timeline-banner-body" id="timelineUrgentBody"></div>
+    </div>
+
     <div class="loading" id="loadingRoadmap">
       <div class="spinner"></div>
       <div class="loading-msg">Building your campaign roadmap and announcement schedule...</div>
@@ -397,6 +413,11 @@
       <div class="output-section" style="margin-bottom:1rem">
         <div class="output-title" id="roadmapTagline"></div>
         <div class="output-preview" id="roadmapSummary"></div>
+      </div>
+      <div id="roadmapBudgetSummary" style="display:none" class="copy-block" style="margin-bottom:1rem">
+        <div class="copy-block-label">Budget Strategy</div>
+        <div class="copy-block-text" id="roadmapBudgetText"></div>
+        <button class="copy-btn" onclick="copyText(document.getElementById('roadmapBudgetText').textContent, this)">⎘ Copy</button>
       </div>
       <div id="roadmapPhases"></div>
       <div id="roadmapError" style="display:none" class="error-box">
@@ -435,16 +456,16 @@ let brandOptions = [];
 let roadmapData = null;
 let docData = null;
 
-// ── SESSION STORAGE HELPERS ──────────────────────────────────────────────────
+// ── SESSION STORAGE ──────────────────────────────────────────────────────────
 
 function saveSession() {
   try {
-    sessionStorage.setItem('ciab_formData',    JSON.stringify(formData));
+    sessionStorage.setItem('ciab_formData',     JSON.stringify(formData));
     sessionStorage.setItem('ciab_brandOptions', JSON.stringify(brandOptions));
     sessionStorage.setItem('ciab_selectedBrand',JSON.stringify(selectedBrand));
     sessionStorage.setItem('ciab_docData',      JSON.stringify(docData));
     sessionStorage.setItem('ciab_roadmapData',  JSON.stringify(roadmapData));
-  } catch(e) { /* sessionStorage unavailable — silently ignore */ }
+  } catch(e) {}
 }
 
 function loadSession() {
@@ -459,7 +480,7 @@ function loadSession() {
     if (sb) selectedBrand = JSON.parse(sb);
     if (dd) docData       = JSON.parse(dd);
     if (rd) roadmapData   = JSON.parse(rd);
-  } catch(e) { /* corrupt cache — silently ignore */ }
+  } catch(e) {}
 }
 
 function clearSession() {
@@ -483,8 +504,6 @@ function showStep(n) {
   document.getElementById('step' + n).classList.add('visible');
   setProgress(n);
   window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  // Restore cached results when navigating back to a completed step
   if (n === 2 && brandOptions.length > 0) renderBrandOptions();
   if (n === 3 && docData) renderDocResults();
   if (n === 4 && roadmapData) renderRoadmapResults();
@@ -497,10 +516,105 @@ function restart() {
     cb.checked = false;
     cb.closest('label').classList.remove('checked');
   });
+  // Hide any timeline banners
+  document.getElementById('timelineWarn').style.display = 'none';
+  document.getElementById('timelineUrgent').style.display = 'none';
   showStep(0);
 }
 
-// ── VALIDATION HELPERS ───────────────────────────────────────────────────────
+// ── TIMELINE ANALYSIS ────────────────────────────────────────────────────────
+
+function analyzeTimeline() {
+  const electionStr  = formData.election_date;
+  const filingStr    = formData.filing_deadline;
+  const today        = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const result = {
+    daysToElection:    null,
+    daysToFiling:      null,
+    isShort:           false,   // < 90 days
+    isUrgent:          false,   // < 30 days
+    filingImminent:    false,   // filing deadline within 7 days or already passed
+    filingPast:        false,
+    contextString:     '',
+    phaseInstruction:  '',
+  };
+
+  if (electionStr) {
+    const electionDate = new Date(electionStr);
+    if (!isNaN(electionDate)) {
+      result.daysToElection = Math.ceil((electionDate - today) / (1000 * 60 * 60 * 24));
+      if (result.daysToElection < 30)      { result.isUrgent = true;  result.isShort = true; }
+      else if (result.daysToElection < 90) { result.isShort  = true; }
+    }
+  }
+
+  if (filingStr) {
+    const filingDate = new Date(filingStr);
+    if (!isNaN(filingDate)) {
+      result.daysToFiling = Math.ceil((filingDate - today) / (1000 * 60 * 60 * 24));
+      if (result.daysToFiling <= 0)  result.filingPast     = true;
+      if (result.daysToFiling <= 7)  result.filingImminent = true;
+    }
+  }
+
+  // Build context string for AI prompt
+  const parts = [];
+  if (result.daysToElection !== null) {
+    parts.push(`Election is ${result.daysToElection} days away (${electionStr}).`);
+  }
+  if (result.filingPast) {
+    parts.push(`IMPORTANT: The filing deadline (${filingStr}) has already passed — candidate is already filed.`);
+  } else if (result.filingImminent) {
+    parts.push(`URGENT: Filing deadline (${filingStr}) is only ${result.daysToFiling} days away — this must be the first action item in Phase 1.`);
+  }
+
+  if (result.isUrgent) {
+    parts.push(`CRITICAL: With only ${result.daysToElection} days until election day, do NOT use the standard 4-phase soft-launch model. Instead generate 2 compressed phases focused entirely on immediate voter contact and GOTV. Skip all soft-launch activities. Every action item must be executable within days, not weeks.`);
+    result.phaseInstruction = 'COMPRESSED (2 phases only — urgent sprint mode)';
+  } else if (result.isShort) {
+    parts.push(`SHORT TIMELINE: With ${result.daysToElection} days until election day, compress to 3 phases, eliminate the soft-launch community presence phase, and front-load all voter contact activities. Every recommended action must be achievable within the available time.`);
+    result.phaseInstruction = 'COMPRESSED (3 phases — short timeline mode)';
+  } else {
+    result.phaseInstruction = 'STANDARD (4 phases — soft-launch to hard-launch)';
+  }
+
+  result.contextString = parts.join(' ');
+  return result;
+}
+
+function showTimelineBanners(timeline) {
+  const warn   = document.getElementById('timelineWarn');
+  const urgent = document.getElementById('timelineUrgent');
+  warn.style.display   = 'none';
+  urgent.style.display = 'none';
+
+  const filingNote = timeline.filingPast
+    ? ' Your filing deadline has already passed — you are confirmed in the race.'
+    : timeline.filingImminent
+      ? ` ⚠️ Your filing deadline is in ${timeline.daysToFiling} days — file immediately before anything else.`
+      : '';
+
+  if (timeline.isUrgent) {
+    urgent.style.display = 'block';
+    document.getElementById('timelineUrgentTitle').textContent = `🚨 ${timeline.daysToElection} days until election day`;
+    document.getElementById('timelineUrgentBody').textContent =
+      `With less than 30 days to go, your roadmap has been compressed into an urgent 2-phase sprint focused entirely on voter contact and get-out-the-vote. Soft-launch activities have been removed.${filingNote}`;
+  } else if (timeline.isShort) {
+    warn.style.display = 'block';
+    document.getElementById('timelineWarnTitle').textContent = `⚠️ ${timeline.daysToElection} days until election day`;
+    document.getElementById('timelineWarnBody').textContent =
+      `With less than 90 days to go, your roadmap has been compressed to 3 phases and front-loaded with voter contact activities. The soft-launch community presence phase has been shortened.${filingNote}`;
+  } else if (filingNote) {
+    // Show warn banner only for filing note, no timeline compression
+    warn.style.display = 'block';
+    document.getElementById('timelineWarnTitle').textContent = '📋 Filing deadline notice';
+    document.getElementById('timelineWarnBody').textContent = filingNote.trim();
+  }
+}
+
+// ── VALIDATION ───────────────────────────────────────────────────────────────
 
 function updateCount(inputId, countId, minChars) {
   const val = document.getElementById(inputId).value;
@@ -512,14 +626,12 @@ function updateCount(inputId, countId, minChars) {
 
 function validateStep0() {
   let valid = true;
-
   const checks = [
-    { id: 'q_name',          cardId: 'card_name',          errId: 'err_name',          test: v => v.trim().length > 0,  msg: 'Please enter your campaign name.' },
-    { id: 'q_election_date', cardId: 'card_election_date', errId: 'err_election_date', test: v => v.trim().length > 0,  msg: 'Please enter your election date.' },
-    { id: 'q_values',        cardId: 'card_values',        errId: 'err_values',        test: v => v.trim().length >= 30, msg: 'Please describe your core values (at least 30 characters).' },
-    { id: 'q_one_thing',     cardId: 'card_one_thing',     errId: 'err_one_thing',     test: v => v.trim().length >= 30, msg: 'Please enter your key message (at least 30 characters).' },
+    { id: 'q_name',          cardId: 'card_name',          errId: 'err_name',          test: v => v.trim().length > 0 },
+    { id: 'q_election_date', cardId: 'card_election_date', errId: 'err_election_date', test: v => v.trim().length > 0 },
+    { id: 'q_values',        cardId: 'card_values',        errId: 'err_values',        test: v => v.trim().length >= 30 },
+    { id: 'q_one_thing',     cardId: 'card_one_thing',     errId: 'err_one_thing',     test: v => v.trim().length >= 30 },
   ];
-
   checks.forEach(({ id, cardId, errId, test }) => {
     const val  = document.getElementById(id).value;
     const card = document.getElementById(cardId);
@@ -535,10 +647,8 @@ function validateStep0() {
       err.classList.remove('visible');
     }
   });
-
   if (!valid) {
-    document.querySelector('.question-card.invalid')
-      .scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.querySelector('.question-card.invalid').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
   return valid;
 }
@@ -554,15 +664,12 @@ function getCheckedOutreach() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Wire checkbox visual state
   document.querySelectorAll('#outreach_checkboxes input[type="checkbox"]').forEach(cb => {
     cb.addEventListener('change', () => {
       cb.closest('label').classList.toggle('checked', cb.checked);
     });
   });
-  // Restore any saved session
   loadSession();
-  // Restore form field values if we have saved formData
   if (formData.name) restoreFormFields();
 });
 
@@ -581,7 +688,6 @@ function restoreFormFields() {
     const el = document.getElementById(elId);
     if (el && formData[key]) el.value = formData[key];
   });
-  // Restore checkboxes
   if (formData.outreach && formData.outreach !== 'Not specified') {
     const selected = formData.outreach.split(', ');
     document.querySelectorAll('#outreach_checkboxes input[type="checkbox"]').forEach(cb => {
@@ -591,7 +697,6 @@ function restoreFormFields() {
       }
     });
   }
-  // Update character counts
   updateCount('q_values', 'count_values', 30);
   updateCount('q_one_thing', 'count_one_thing', 30);
 }
@@ -629,22 +734,13 @@ function copyText(text, btn) {
   navigator.clipboard.writeText(text).then(() => {
     btn.textContent = '✓ Copied';
     btn.classList.add('copied');
-    setTimeout(() => {
-      btn.textContent = '⎘ Copy';
-      btn.classList.remove('copied');
-    }, 2000);
+    setTimeout(() => { btn.textContent = '⎘ Copy'; btn.classList.remove('copied'); }, 2000);
   }).catch(() => {
-    // Fallback for older browsers
     const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
     document.body.removeChild(ta);
-    btn.textContent = '✓ Copied';
-    btn.classList.add('copied');
+    btn.textContent = '✓ Copied'; btn.classList.add('copied');
     setTimeout(() => { btn.textContent = '⎘ Copy'; btn.classList.remove('copied'); }, 2000);
   });
 }
@@ -778,11 +874,7 @@ async function goToStep3() {
   document.getElementById('loadingDocs').style.display = 'block';
   document.getElementById('docsResults').style.display = 'none';
 
-  const msgs = [
-    'Building your branded letterhead...',
-    'Writing your email template and press release...',
-    'Creating your social media kit...'
-  ];
+  const msgs = ['Building your branded letterhead...', 'Writing your email template and press release...', 'Creating your social media kit...'];
   let mi = 0;
   document.getElementById('loadingDocsMsg').textContent = msgs[0];
   const iv = setInterval(() => { document.getElementById('loadingDocsMsg').textContent = msgs[Math.min(++mi, msgs.length - 1)]; }, 4000);
@@ -860,7 +952,6 @@ Opponent: ${formData.opponent}`;
     clearInterval(iv);
     saveSession();
     renderDocResults();
-
   } catch(e) {
     clearInterval(iv);
     document.getElementById('loadingDocs').style.display = 'none';
@@ -880,7 +971,6 @@ function renderDocResults() {
   document.getElementById('docsResults').style.display = 'block';
   document.getElementById('docsError').style.display = 'none';
 
-  // Letterhead preview
   document.getElementById('letterheadPreview').innerHTML = `
     <div class="letterhead-box">
       <div class="letterhead-header" style="background:${selectedBrand.primary_color}; color:#fff;">
@@ -907,33 +997,51 @@ function renderDocResults() {
     </div>
   `;
 
-  // Copyable blocks
   const s = docData.social || {};
   const container = document.getElementById('docCopyBlocks');
   container.innerHTML = '';
   const blocks = [
-    { label: 'Tagline',            text: docData.tagline },
-    { label: 'Candidate Summary',  text: docData.candidate_summary },
-    { label: 'Key Promise',        text: docData.key_promise },
-    { label: 'Twitter / X Bio',    text: s.bio_twitter || '' },
-    { label: 'Facebook Bio',       text: s.bio_facebook || '' },
-    { label: 'Instagram Bio',      text: (s.bio_instagram || '').replace(/\\n/g, '\n') },
-    { label: 'LinkedIn Bio',       text: s.bio_linkedin || '' },
-    { label: 'Campaign Hashtags',  text: (s.hashtags || []).join('  ') },
+    { label: 'Tagline',           text: docData.tagline },
+    { label: 'Candidate Summary', text: docData.candidate_summary },
+    { label: 'Key Promise',       text: docData.key_promise },
+    { label: 'Twitter / X Bio',   text: s.bio_twitter || '' },
+    { label: 'Facebook Bio',      text: s.bio_facebook || '' },
+    { label: 'Instagram Bio',     text: (s.bio_instagram || '').replace(/\\n/g, '\n') },
+    { label: 'LinkedIn Bio',      text: s.bio_linkedin || '' },
+    { label: 'Campaign Hashtags', text: (s.hashtags || []).join('  ') },
   ];
   blocks.forEach(b => { if (b.text) container.appendChild(makeCopyBlock(b.label, b.text)); });
 }
 
 async function goToStep4() {
   showStep(4);
+
+  // Run timeline analysis before anything else
+  const timeline = analyzeTimeline();
+  showTimelineBanners(timeline);
+
   document.getElementById('loadingRoadmap').style.display = 'block';
   document.getElementById('roadmapResults').style.display = 'none';
 
   try {
-    const system = `You are a senior political campaign strategist. Return a JSON object with: tagline (campaign slogan), summary (2 sentence big-picture strategy), phases (array of exactly 4 objects each with: phase_name, timeframe (use real dates based on election date and filing deadline provided), focus (2-3 sentences), key_actions (array of 4 specific action items scaled to the team size and budget provided), announcement (specific public announcement for this phase), local_hooks (array of 2 local events or dates to leverage in this phase)).
-Use the soft-launch to hard-launch model: 1) Community Presence, 2) Issue Dialogue, 3) Official Announcement, 4) Full Campaign Push.
-Scale all recommendations to the budget and team size. Prioritize the outreach channels selected. If challenger, build in contrast messaging opportunities. If low name recognition, front-load introduction activities. Make the roadmap specific to the district, dates, geography, and local events provided.
+    // Build budget guidance instruction
+    const budgetInstruction = formData.budget
+      ? `Budget: ${formData.budget}. Scale ALL key actions to this budget — do not recommend tactics that exceed it. Include a budget_summary field at the top level of your JSON (2-3 sentences on how to allocate this budget across the campaign). Each phase must include a budget_guidance field (1 sentence on how to allocate spending in that phase, e.g. "Spend ~60% on door-knocking materials, ~40% on social media ads").`
+      : 'No budget specified — provide general guidance scaled to a modest local campaign.';
+
+    const system = `You are a senior political campaign strategist. Return a JSON object with:
+tagline (campaign slogan),
+summary (2 sentence big-picture strategy),
+budget_summary (2-3 sentences on overall budget allocation strategy — omit if no budget provided),
+phases (array of phase objects, each with: phase_name, timeframe (real dates from election/filing dates), focus (2-3 sentences), key_actions (array of 4 specific action items scaled to team size and budget), announcement (specific public announcement for this phase), local_hooks (array of 2 local events or dates to leverage), budget_guidance (1 sentence on spending allocation for this phase)).
+
+Phase model to use: ${timeline.phaseInstruction}
+${timeline.contextString ? `\nTimeline context: ${timeline.contextString}` : ''}
+
+${budgetInstruction}
+Scale all recommendations to the budget and team size. Prioritize the outreach channels selected. If challenger, build in contrast messaging. If low name recognition, front-load introductions.
 Return ONLY valid JSON, nothing else.`;
+
     const user = `Campaign: ${formData.name}
 Race: ${formData.race}
 District: ${formData.district}
@@ -953,6 +1061,7 @@ Team size: ${formData.team_size}
 Geography: ${formData.geography}
 Outreach channels: ${formData.outreach}
 Name recognition: ${formData.name_recognition}`;
+
     roadmapData = await callClaude(system, user);
     saveSession();
     renderRoadmapResults();
@@ -977,10 +1086,18 @@ function renderRoadmapResults() {
   document.getElementById('roadmapTagline').textContent = '"' + roadmapData.tagline + '"';
   document.getElementById('roadmapSummary').textContent = roadmapData.summary;
 
+  // Budget summary card
+  const budgetSummaryEl = document.getElementById('roadmapBudgetSummary');
+  if (roadmapData.budget_summary) {
+    budgetSummaryEl.style.display = 'block';
+    document.getElementById('roadmapBudgetText').textContent = roadmapData.budget_summary;
+  } else {
+    budgetSummaryEl.style.display = 'none';
+  }
+
   const phasesEl = document.getElementById('roadmapPhases');
   phasesEl.innerHTML = '';
 
-  // Roadmap summary copy block
   const summaryBlock = makeCopyBlock('Roadmap Summary', roadmapData.summary);
   phasesEl.appendChild(summaryBlock);
 
@@ -996,6 +1113,7 @@ function renderRoadmapResults() {
         <div class="phase-announce">Announce: ${phase.announcement}</div>
         <div class="keyword-chips">${(phase.key_actions||[]).map(a=>`<span class="chip">${a}</span>`).join('')}</div>
         ${phase.local_hooks ? `<div style="margin-top:8px;font-size:0.8rem;color:#888;font-style:italic;">Local hooks: ${phase.local_hooks.join(' · ')}</div>` : ''}
+        ${phase.budget_guidance ? `<div class="phase-budget">💰 ${phase.budget_guidance}</div>` : ''}
         <button class="copy-btn" style="position:static;display:inline-flex;margin-top:10px;" onclick="copyText(${JSON.stringify(phase.focus + '\n\nAnnounce: ' + phase.announcement)}, this)">⎘ Copy phase</button>
       </div>`;
     phasesEl.appendChild(div);
@@ -1032,9 +1150,7 @@ function generateLetterheadHTML() {
     </div>
     <div class="tagline">"${docData.tagline}"</div>
   </div>
-  <div class="body-area">
-    <p style="color:#ccc; font-style:italic;">[Letter body goes here]</p>
-  </div>
+  <div class="body-area"><p style="color:#ccc;font-style:italic;">[Letter body goes here]</p></div>
   <div class="footer">${formData.name} &middot; ${formData.race} &middot; Paid for by the campaign committee</div>
 </body></html>`;
 }
@@ -1112,7 +1228,7 @@ function generateSocialKitHTML() {
   return `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><title>${formData.name} — Social Media Kit</title>
-<style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 40px;color:#1a1a1a;background:#f4f1eb;} h2{font-size:0.9rem;text-transform:uppercase;letter-spacing:0.08em;color:${selectedBrand.primary_color};border-bottom:2px solid #e0ddd6;padding-bottom:8px;margin:2.5rem 0 1.25rem;}</style></head>
+<style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 40px;color:#1a1a1a;background:#f4f1eb;}h2{font-size:0.9rem;text-transform:uppercase;letter-spacing:0.08em;color:${selectedBrand.primary_color};border-bottom:2px solid #e0ddd6;padding-bottom:8px;margin:2.5rem 0 1.25rem;}</style></head>
 <body>
   <div style="background:${selectedBrand.primary_color};color:#fff;padding:28px 40px;border-radius:8px;margin-bottom:2.5rem;">
     <div style="font-size:1.8rem;font-weight:700;margin-bottom:6px;">${formData.name}</div>
@@ -1121,45 +1237,38 @@ function generateSocialKitHTML() {
   </div>
   <h2>Platform Bios</h2>
   <div style="display:grid;gap:1rem;">
-    <div style="background:#fff;border-radius:8px;padding:1rem 1.25rem;border:1.5px solid #e0ddd6;">
-      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:6px;">Twitter / X <span style="color:${selectedBrand.primary_color};font-weight:400;">(${(s.bio_twitter||'').length} chars)</span></div>
-      <div style="font-size:0.9rem;color:#333;">${s.bio_twitter || ''}</div>
-    </div>
-    <div style="background:#fff;border-radius:8px;padding:1rem 1.25rem;border:1.5px solid #e0ddd6;">
-      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:6px;">Facebook</div>
-      <div style="font-size:0.9rem;color:#333;">${s.bio_facebook || ''}</div>
-    </div>
-    <div style="background:#fff;border-radius:8px;padding:1rem 1.25rem;border:1.5px solid #e0ddd6;">
-      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:6px;">Instagram</div>
-      <div style="font-size:0.9rem;color:#333;">${igBio}</div>
-    </div>
-    <div style="background:#fff;border-radius:8px;padding:1rem 1.25rem;border:1.5px solid #e0ddd6;">
-      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:6px;">LinkedIn</div>
-      <div style="font-size:0.9rem;color:#333;">${s.bio_linkedin || ''}</div>
-    </div>
+    <div style="background:#fff;border-radius:8px;padding:1rem 1.25rem;border:1.5px solid #e0ddd6;"><div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:6px;">Twitter / X (${(s.bio_twitter||'').length} chars)</div><div style="font-size:0.9rem;color:#333;">${s.bio_twitter||''}</div></div>
+    <div style="background:#fff;border-radius:8px;padding:1rem 1.25rem;border:1.5px solid #e0ddd6;"><div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:6px;">Facebook</div><div style="font-size:0.9rem;color:#333;">${s.bio_facebook||''}</div></div>
+    <div style="background:#fff;border-radius:8px;padding:1rem 1.25rem;border:1.5px solid #e0ddd6;"><div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:6px;">Instagram</div><div style="font-size:0.9rem;color:#333;">${igBio}</div></div>
+    <div style="background:#fff;border-radius:8px;padding:1rem 1.25rem;border:1.5px solid #e0ddd6;"><div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:6px;">LinkedIn</div><div style="font-size:0.9rem;color:#333;">${s.bio_linkedin||''}</div></div>
   </div>
   <h2>Campaign Hashtags</h2>
   <div style="margin-bottom:2rem;">${hashtags}</div>
-  <h2>Post Templates</h2>
-  ${posts}
-  <div style="background:${selectedBrand.secondary_color};color:#fff;margin:3rem -40px 0;padding:14px 40px;font-size:0.75rem;text-align:center;">
-    Generated by Campaign in a Box &middot; ${formData.name} &middot; ${formData.race}
-  </div>
+  <h2>Post Templates</h2>${posts}
+  <div style="background:${selectedBrand.secondary_color};color:#fff;margin:3rem -40px 0;padding:14px 40px;font-size:0.75rem;text-align:center;">Generated by Campaign in a Box &middot; ${formData.name} &middot; ${formData.race}</div>
 </body></html>`;
 }
 
 function generateRoadmapHTML() {
+  const budgetBlock = roadmapData.budget_summary ? `
+    <div style="background:#fff;padding:1rem 1.25rem;border-radius:8px;border:1.5px solid #e0ddd6;margin-bottom:2rem;">
+      <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#888;margin-bottom:6px;">💰 Budget Strategy — ${formData.budget || 'General guidance'}</div>
+      <div style="font-size:0.9rem;color:#333;line-height:1.6;">${roadmapData.budget_summary}</div>
+    </div>` : '';
+
   const phases = (roadmapData.phases||[]).map((p,i) => `
     <div style="border:1.5px solid #ddd;border-radius:8px;padding:1.25rem;margin-bottom:1rem;display:flex;gap:1rem;background:#fff;">
       <div style="width:32px;height:32px;border-radius:50%;background:${selectedBrand.primary_color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-family:Georgia,serif;">${i+1}</div>
-      <div>
+      <div style="flex:1">
         <strong>${p.phase_name}</strong> <span style="color:#888;font-style:italic;font-size:0.85rem;">${p.timeframe}</span>
         <p style="font-size:0.88rem;color:#444;margin:6px 0;">${p.focus}</p>
         <p style="font-size:0.85rem;color:#2d7a4f;font-weight:700;">Announce: ${p.announcement}</p>
         <p style="font-size:0.82rem;color:#666;">${(p.key_actions||[]).join(' &middot; ')}</p>
         ${p.local_hooks ? `<p style="font-size:0.78rem;color:#999;font-style:italic;margin-top:4px;">Local hooks: ${p.local_hooks.join(' · ')}</p>` : ''}
+        ${p.budget_guidance ? `<p style="font-size:0.8rem;color:#555;background:#f4f1eb;padding:8px 12px;border-radius:6px;margin-top:8px;border-left:3px solid #aaa;">💰 ${p.budget_guidance}</p>` : ''}
       </div>
     </div>`).join('');
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><title>${formData.name} — Campaign Roadmap</title>
@@ -1169,12 +1278,11 @@ function generateRoadmapHTML() {
     <h1 style="font-size:1.8rem;margin-bottom:6px;">${formData.name}</h1>
     <p style="font-style:italic;opacity:0.9;">"${roadmapData.tagline}"</p>
   </div>
-  <p style="font-size:0.9rem;color:#555;margin-bottom:2rem;background:#fff;padding:1rem 1.25rem;border-radius:8px;border:1.5px solid #e0ddd6;">${roadmapData.summary}</p>
+  <p style="font-size:0.9rem;color:#555;margin-bottom:1.5rem;background:#fff;padding:1rem 1.25rem;border-radius:8px;border:1.5px solid #e0ddd6;">${roadmapData.summary}</p>
+  ${budgetBlock}
   <h2 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;color:${selectedBrand.primary_color};border-bottom:2px solid #e0ddd6;padding-bottom:8px;">Campaign Phases &amp; Announcement Schedule</h2>
   ${phases}
-  <div style="background:${selectedBrand.secondary_color};color:#fff;margin:2rem -40px 0;padding:14px 40px;font-size:0.75rem;text-align:center;">
-    Generated by Campaign in a Box &middot; ${formData.name} &middot; ${formData.race}
-  </div>
+  <div style="background:${selectedBrand.secondary_color};color:#fff;margin:2rem -40px 0;padding:14px 40px;font-size:0.75rem;text-align:center;">Generated by Campaign in a Box &middot; ${formData.name} &middot; ${formData.race}</div>
 </body></html>`;
 }
 
@@ -1188,25 +1296,21 @@ function downloadFile(content, filename, type) {
 
 function goToStep5() {
   showStep(5);
-
   const box = document.getElementById('finalPackageBox');
   box.style.background = selectedBrand.primary_color;
   box.style.color = '#fff';
-
   document.getElementById('finalCampaignName').textContent = formData.name + ' — ' + formData.race;
   document.getElementById('finalSummary').textContent = roadmapData.summary;
 
   const btnContainer = document.getElementById('downloadButtons');
   btnContainer.innerHTML = '';
-
   const downloads = [
-    { label: '📄 Download Letterhead (HTML)',        filename: 'letterhead.html',        content: generateLetterheadHTML(),    type: 'text/html' },
-    { label: '📧 Download Email Template (HTML)',     filename: 'email-template.html',    content: generateEmailHTML(),         type: 'text/html' },
-    { label: '📣 Download Press Release (HTML)',      filename: 'press-release.html',     content: generatePressReleaseHTML(),  type: 'text/html' },
-    { label: '📱 Download Social Media Kit (HTML)',   filename: 'social-media-kit.html',  content: generateSocialKitHTML(),     type: 'text/html' },
-    { label: '🗺️ Download Campaign Roadmap (HTML)',   filename: 'campaign-roadmap.html',  content: generateRoadmapHTML(),       type: 'text/html' },
+    { label: '📄 Download Letterhead (HTML)',       filename: 'letterhead.html',       content: generateLetterheadHTML(),   type: 'text/html' },
+    { label: '📧 Download Email Template (HTML)',    filename: 'email-template.html',   content: generateEmailHTML(),        type: 'text/html' },
+    { label: '📣 Download Press Release (HTML)',     filename: 'press-release.html',    content: generatePressReleaseHTML(), type: 'text/html' },
+    { label: '📱 Download Social Media Kit (HTML)',  filename: 'social-media-kit.html', content: generateSocialKitHTML(),    type: 'text/html' },
+    { label: '🗺️ Download Campaign Roadmap (HTML)',  filename: 'campaign-roadmap.html', content: generateRoadmapHTML(),      type: 'text/html' },
   ];
-
   downloads.forEach(d => {
     const btn = document.createElement('button');
     btn.className = 'download-btn';
