@@ -6,9 +6,7 @@
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/election-calender", "dest": "/election-calender.html" },
-    { "src": "/election-calendar", "dest": "/election-calender.html" },
-    { "src": "/campaign-brand-builder", "dest": "/Campaign_Brand_Builder_v2.html" },
+    { "src": "/election-calendar", "dest": "/election-calendar.html" },
     { "src": "/", "dest": "/index.html" }
   ]
 }
