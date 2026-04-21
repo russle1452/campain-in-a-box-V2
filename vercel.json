@@ -3,5 +3,9 @@
   "outputDirectory": "public",
   "builds": [
     { "src": "api/*.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/election-calendar", "dest": "/election-calendar.html" }
   ]
 }
